@@ -33,12 +33,16 @@ function Login() {
       console.log("aqui: ", user);
 
       // armazena o token
-      signIn({
-        token: response.data.token,
-        expiresIn: 3600, // token expira em 1 hora
-        tokenType: 'Bearer',
-        authState: { email: email }
-      });
+      if (response.data.token !== undefined) {
+        signIn({
+          token: response.data.token,
+          expiresIn: 3600, // token expira em 1 hora
+          tokenType: 'Bearer',
+          authState: { email: email }
+        });
+        window.location.href = "/home";
+      }
+      console.log("chegou aqui.");
 
     } catch (error) {
       if (!error?.response) {

@@ -3,12 +3,15 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
 
-const JWT_KEY = "y7SxirhO&6cA2%Mb16UziE095&L3#f&6y$oEcU)";
+const JWT_KEY = "y7SxirhO&6cA2%Mb16UziE095&L3#f&6y$o^c4)";
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+const port = 3000;
 
 const mongoUrl = "mongodb+srv://fecarvalho05:PGUD7w3GZdFGNWWT@cluster0.cgnt3gi.mongodb.net/?retryWrites=true&w=majority";
 
@@ -18,7 +21,7 @@ mongoose
 
     })
     .then(() => {
-        console.log('MongoDB conectado')
+        console.log('Banido da Twitch')
     })
     .catch((e) => {
         console.log(e, "no")
@@ -92,10 +95,9 @@ app.post("/user-data", async (req, res) => {
             });
     } catch (error) {
         res.send({ status: "Error" });
-
     }
 });
 
-app.listen(3000, () => {
-    console.log("Server abrido; porta: 3000");
+app.listen(port, () => {
+    console.log(`Server abrido; porta: ${port}`);
 });

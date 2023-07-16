@@ -10,15 +10,16 @@ export default class SignUp extends Component {
       name: '',
       surname: '',
       email: '',
-      password: ''
+      password: '',
+      image: ''
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    const { name, surname, email, password } = this.state;
-    console.log(name, surname, email, password);
+    const { name, surname, email, password, image } = this.state;
+    console.log(name, surname, email, password, image);
     fetch('http://localhost:3000/register', {
       method: "POST",
       crossDomain: true,
@@ -31,7 +32,8 @@ export default class SignUp extends Component {
         name,
         surname,
         email,
-        password
+        password,
+        image
       }),
     })
       .then((res) => res.json())
@@ -94,6 +96,17 @@ export default class SignUp extends Component {
                   onChange={e => this.setState({ password: e.target.value })}
                 />
               </div>
+
+              <div className="mb-3">
+                <label>Imagem</label>
+                <input
+                  type="file"
+                  className="form-control"
+                  placeholder="imagem"
+                  onChange={e => this.setState({ image: e.target.value })}
+                />
+              </div>
+
 
               <div className="d-grid">
                 <button type="submit" className="btn btn-primary">

@@ -5,6 +5,7 @@ function RegOcorrenciaPage() {
     return (
         <>
             <NavbarHome opacity1={1} opacity2={1} />
+            
         </>
     )
 }
