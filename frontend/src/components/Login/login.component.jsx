@@ -2,14 +2,35 @@ import React, { useState } from 'react'
 import Navbar from '../Navbar/navbar.component';
 import axios from 'axios';
 import { useSignIn } from 'react-auth-kit';
+import PropTypes from 'prop-types';
 
-function Login() {
+async function loginUser(credentials) {
+  return fetch("http://localhost:3000/login", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(credentials)
+      })
+      .then(data => data.json())
+}
+
+export default function Login({ setToken }) {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
   const signIn = useSignIn();
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const token = await loginUser({
+      email,
+      password
+    });
+    setToken(token);
+  }
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -60,7 +81,9 @@ function Login() {
       <Navbar />
       <div className="auth-wrapper">
         <div className="auth-inner">
-          <form >
+          <form
+          onSubmit={handleLogin}
+          >
             <h3>Login</h3>
 
             <div className="mb-3">
@@ -103,7 +126,7 @@ function Login() {
                 type="submit"
                 className="btn btn-primary"
                 background-color="#0850BC"
-                onClick={(e) => handleLogin(e)}
+                
               >
                 Login
               </button>
@@ -119,4 +142,6 @@ function Login() {
 
 }
 
-export default Login
+Login.propTypes = {
+  setToken: PropTypes.func.isRequired
+}

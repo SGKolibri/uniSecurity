@@ -10,6 +10,11 @@ const JWT_KEY = "y7SxirhO&6cA2%Mb16UziE095&L3#f&6y$o^c4)";
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use('/login', (req, res) => {
+    res.send({
+        token: 'test123'
+    })
+})
 
 const port = 3000;
 

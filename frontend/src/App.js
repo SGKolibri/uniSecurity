@@ -8,26 +8,30 @@ import Login from './components/Login/login.component'
 import SignUp from './components/Register/signup.component'
 import RegOcorrencia from './pages/Home/regOcorrenciaPage'
 import VerOcorrencia from './pages/Home/verOcorrenciaPage'
-
 import { RequireAuth } from 'react-auth-kit'
+import useToken from './components/Login/useToken'
 
 function App() {
+  // const [ token, setToken ] = useToken();
+
+  // if(!token) {
+  //   return <Login setToken={setToken} />
+  // }
+
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route exact path="/*" element={<Login />} />
-        <Route className="App" path="/login" element={<Login />} />
-        <Route className="App" path="/register" element={<SignUp />} />
-        <Route path="/home" element={
-          <RequireAuth loginPath='/login'>
-            <VerOcorrencia />
-          </ RequireAuth>
-        } />
-        {/* <Route path="/home/ver-ocorrencia" element={<VerOcorrencia />} />
-        <Route path="/home/reg-ocorrencia" element={<RegOcorrencia />} /> */}
-      </Routes >
-    </BrowserRouter >
+      <div className="App"> 
+        <Routes>
+          <Route path={'/login'} element={<Login />} />
+          <Route path={'/home'} element={
+            <RequireAuth loginPath={'/login'}>
+              <RegOcorrencia />
+            </RequireAuth>
+          } />
+        </Routes>
+      </div>
+    </BrowserRouter>
   )
 }
 
