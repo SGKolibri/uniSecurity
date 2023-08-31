@@ -2,35 +2,18 @@ import React, { useState } from 'react'
 import Navbar from '../Navbar/navbar.component';
 import axios from 'axios';
 import { useSignIn } from 'react-auth-kit';
-import PropTypes from 'prop-types';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { motion } from 'framer-motion';
 
-async function loginUser(credentials) {
-  return fetch("http://localhost:3000/login", {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(credentials)
-      })
-      .then(data => data.json())
-}
-
-export default function Login({ setToken }) {
+export default function Login() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
-  const signIn = useSignIn();
 
-  const handleSubmit = async e => {
-    e.preventDefault();
-    const token = await loginUser({
-      email,
-      password
-    });
-    setToken(token);
-  }
+  const signIn = useSignIn();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -41,19 +24,15 @@ export default function Login({ setToken }) {
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/login-user",
-        JSON.stringify({ email, password }),
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      console.log(email, password);
+      const response = await axios.post("http://localhost:3000/login-user", {
+        email: email,
+        password: password
+      });
       setUser(response.data);
-      console.log("aqui: ", user);
+      console.log(response.data);
+      console.log("Response: ", response);
 
-      // armazena o token
+      // 
       if (response.data.token !== undefined) {
         signIn({
           token: response.data.token,
@@ -61,11 +40,12 @@ export default function Login({ setToken }) {
           tokenType: 'Bearer',
           authState: { email: email }
         });
-        window.location.href = "/home";
+        window.location.href = "/home/reg-ocorrencia";
       }
-      console.log("chegou aqui.");
+      toast.error("Erro ao realizar login!");
 
     } catch (error) {
+      toast.error("Erro ao realizar login!");
       if (!error?.response) {
         setError("Erro ao conectar com o servidor");
       } else if (error.response.status === 401) {
@@ -75,14 +55,14 @@ export default function Login({ setToken }) {
 
   };
 
-
   return (
     <>
-      <Navbar />
+      <ToastContainer />
+      <Navbar opacity1={1} opacity2={0.75} />
       <div className="auth-wrapper">
         <div className="auth-inner">
           <form
-          onSubmit={handleLogin}
+            onSubmit={handleLogin}
           >
             <h3>Login</h3>
 
@@ -122,14 +102,15 @@ export default function Login({ setToken }) {
             </div>
 
             <div className="d-grid">
-              <button
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 type="submit"
                 className="btn btn-primary"
                 background-color="#0850BC"
-                
               >
                 Login
-              </button>
+              </motion.button>
             </div>
             {/* <p className="forgot-password text-right">
                 Esqueceu sua <a href="#">senha?</a>
@@ -140,8 +121,4 @@ export default function Login({ setToken }) {
     </>
   )
 
-}
-
-Login.propTypes = {
-  setToken: PropTypes.func.isRequired
 }

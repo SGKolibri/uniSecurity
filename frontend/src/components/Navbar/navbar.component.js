@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import shieldLogo from '../../images/shield-logo.png'
 
-function Navbar() {
+function Navbar({ opacity1, opacity2 }) {
     return (
         <nav className="navbar navbar-expand-lg navbar-light fixed-top"
             style={{ backgroundColor: '#0850BC' }}
@@ -25,12 +25,12 @@ function Navbar() {
                         position: 'absolute'
                     }}>
                         <li className="nav-item">
-                            <Link className="nav-link" to={'/login'} style={{ color: '#fff' }}>
+                            <Link className="nav-link" to={'/login'} style={{ color: '#fff', opacity: opacity1 }}>
                                 Login
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to={'/register'} style={{ color: '#fff' }}>
+                            <Link className="nav-link" to={'/register'} style={{ color: '#fff', opacity: opacity2 }}>
                                 Registrar
                             </Link>
                         </li>
