@@ -51,7 +51,6 @@ app.post("/register-user", async (req, res) => {
             return res.json({ status: "error aqui", error: "Email já cadastrado!" });
         }
 
-
         const response = await User.create({
             name,
             surname,
