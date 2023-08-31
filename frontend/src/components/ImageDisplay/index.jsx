@@ -18,7 +18,7 @@ function ImageDisplay() {
     useEffect(() => {
 
         const image = axios.get('http://localhost:3000/get-image', {
-
+            responseType: 'arraybuffer',
         },);
 
         image.then((response) => {
