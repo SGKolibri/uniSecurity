@@ -5,22 +5,26 @@ import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from 'react-auth-kit'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import { ChakraProvider } from "@chakra-ui/react"
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
-  <React.StrictMode>
-    <AuthProvider
-      authType={'cookie'}
-      authName={'_auth'}
-      sameSite={'none'}
-      cookieDomain={window.location.hostname} // setar o dominio do cookie
-      cookieSecure={false} // settar true para https
-    >
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </AuthProvider>
-  </React.StrictMode>
+  <ChakraProvider>
+    <React.StrictMode>
+      <AuthProvider
+        authType={'cookie'}
+        authName={'_auth'}
+        sameSite={'none'}
+        cookieDomain={window.location.hostname} // setar o dominio do cookie
+        cookieSecure={false} // settar true para https
+      >
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </AuthProvider>
+    </React.StrictMode>
+  </ChakraProvider>
 )
 
 // If you want to start measuring performance in your app, pass a function

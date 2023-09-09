@@ -4,8 +4,8 @@ import './App.css'
 import { Routes, Route } from 'react-router-dom'
 
 /* Pages and Components */
-import Login from './components/Login/login.component'
-import SignUp from './components/Register/signup.component'
+import Login from './components/Login/login-component'
+import SignUp from './components/Register/signup-component'
 import RegOcorrencia from './pages/Home/regOcorrenciaPage'
 import VerOcorrencia from './pages/Home/verOcorrenciaPage'
 import { RequireAuth } from 'react-auth-kit'

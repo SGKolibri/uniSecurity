@@ -3,14 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const multer = require('multer');
-
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
-
-
 const JWT_KEY = "y7SxirhO&6cA2%Mb16UziE095&L3#f&6y$o^c4)";
-
 
 const app = express();
 app.use(express.json());
@@ -37,7 +30,6 @@ require("./src/ocorrenciaDetails");
 
 const User = mongoose.model("UserInfo");
 const Ocorrencia = mongoose.model("OcorrenciaInfo");
-const ImageModel = mongoose.model('Image', { data: Buffer });
 
 
 app.post("/register-user", async (req, res) => {
@@ -56,7 +48,7 @@ app.post("/register-user", async (req, res) => {
             surname,
             email,
             password: encryptedPassword,
-            image,
+            image
         });
         res.send({ status: "ok", user: response });
     } catch (error) {
@@ -67,12 +59,13 @@ app.post("/register-user", async (req, res) => {
 });
 
 app.post("/login-user", async (req, res) => {
+
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
 
     if (!user) {
-        return res.json({ status: "error", error: "Usuário não encontrado." });
+        return res.json({ status: "error", error: "Email não registrado." });
     }
 
     if (await bcrypt.compare(password, user.password)) {
@@ -85,30 +78,27 @@ app.post("/login-user", async (req, res) => {
             return res.json({ status: "error", error: "Usuário não encontrado." });
         }
     }
-    res.json({ status: "error", error: "Senha inválida." });
+    res.json({ status: "error", error: "Senha inválida!" });
 });
 
+app.get("/get-user", async (req, res) => {
 
-app.get("/get-image", async (req, res) => {
     try {
-        const allUser = await User.findOne({})
-        // if (!image) {
-        //     return res.status(404).json({ message: 'Image not found' });
-        // }
-        res.send({ status: "ok", image: allUser.image });
+        const allUser = await User.find({});
+        res.send({ status: "ok", users: allUser });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
     }
 });
 
-
 app.post("/reg-ocorrencia", async (req, res) => {
-    const { nome, data, hora, localizacao, descricao } = req.body;
+    const { nome, categoria, data, hora, localizacao, descricao } = req.body;
 
     try {
         await Ocorrencia.create({
             nome,
+            categoria,
             data,
             hora,
             localizacao,
@@ -117,6 +107,45 @@ app.post("/reg-ocorrencia", async (req, res) => {
         res.send({ status: "Sucesso ao registrar ocorrência" });
     } catch (error) {
         res.send({ status: "Error" });
+    }
+});
+
+app.get("/get-ocorrencia", async (req, res) => {
+    try {
+        const allOcorrencia = await Ocorrencia.find({});
+        res.send({ status: "ok", ocorrencia: allOcorrencia });
+    } catch (error) {
+        console.error(error);
+    }
+});
+
+app.patch("/edit-ocorrencia/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+        const { nome, data, hora, localizacao, descricao } = req.body;
+
+        const response = await Ocorrencia.findByIdAndUpdate(id, {
+            nome,
+            data,
+            hora,
+            localizacao,
+            descricao,
+        });
+        res.send({ status: "ok", ocorrencia: response });
+    }
+    catch (error) {
+        console.error(error);
+    }
+});
+
+app.delete("/delete-ocorrencia/:id", async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        await Ocorrencia.findByIdAndDelete(id);
+        res.send({ status: "ok" });
+    } catch (error) {
+        console.error(error);
     }
 });
 

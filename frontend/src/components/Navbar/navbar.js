@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import shieldLogo from '../../images/shield-logo.png'
+import { BiShieldQuarter } from '@react-icons/all-files/bi/BiShieldQuarter';
 
 function Navbar({ opacity1, opacity2 }) {
     return (
@@ -9,9 +9,10 @@ function Navbar({ opacity1, opacity2 }) {
         >
             <div className="container">
                 <Link to={'/login'} style={{ color: '#fff' }}>
-                    <img src={shieldLogo} alt="logo" width="40px" height="40px"
+                    <BiShieldQuarter
                         style={{
-                            marginRight: 15
+                            width: "40px",
+                            height: "40px",
                         }}
                     />
                 </Link>

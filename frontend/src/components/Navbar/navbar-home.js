@@ -1,11 +1,11 @@
 import { React } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSignOut } from "react-auth-kit";
-import shieldLogo from '../../images/shield-logo.png'
-import avatarIcon from '../../images/avatar-icon.png'
-import ImageDisplay from "../ImageDisplay";
+import UserDisplay from "../UserDisplay/user-display";
+import { FaRegUserCircle } from '@react-icons/all-files/fa/FaRegUserCircle';
+import { BiShieldQuarter } from '@react-icons/all-files/bi/BiShieldQuarter';
 
-function NavbarHome({ opacity1, opacity2, userProfile }) {
+function NavbarHome({ opacity1, opacity2 }) {
 
     const signOut = useSignOut();
     const navigate = useNavigate();
@@ -25,9 +25,10 @@ function NavbarHome({ opacity1, opacity2, userProfile }) {
             >
                 <div className="container">
                     <Link to={'/home/ver-ocorrencia'} style={{ color: '#fff' }}>
-                        <img src={shieldLogo} alt="logo" width="40px" height="40px"
+                        <BiShieldQuarter
                             style={{
-                                marginRight: "15px"
+                                width: "40px",
+                                height: "40px",
                             }}
                         />
                     </Link>
@@ -41,7 +42,6 @@ function NavbarHome({ opacity1, opacity2, userProfile }) {
                         <b>Security</b>
                     </Link>
                     <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
-                        < ImageDisplay />
 
                         <ul className="navbar-nav ml-auto" >
                             <li className="nav-item">
@@ -64,16 +64,20 @@ function NavbarHome({ opacity1, opacity2, userProfile }) {
                                     Ver Ocorrência
                                 </Link>
                             </li>
-
                         </ul>
                     </div>
-                </div>
-                <div style={{
-                    width: 120,
-                    height: 40,
-                    marginLeft: -120
-                }}>
-                    <img src={userProfile} alt="user-icon" onClick={logOut} />
+                    <UserDisplay />
+                    <div style={{
+                        float: "right",
+                        height: "40px",
+                        marginLeft: "1%"
+                    }}>
+                        <FaRegUserCircle style={{
+                            width: "100%",
+                            height: "100%"
+                        }}
+                        />
+                    </div>
                 </div>
             </nav >
         </>

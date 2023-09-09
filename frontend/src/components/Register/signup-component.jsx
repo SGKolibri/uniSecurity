@@ -1,20 +1,19 @@
-import React, { Component, useState } from 'react'
-import Navbar from '../Navbar/navbar.component';
+import React, { useState } from 'react'
+import Navbar from '../Navbar/navbar';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { color, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 function SignUp() {
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [image, setImage] = useState('');
 
   //Convert image to base64
-
   const convertBase64 = (e) => {
     const reader = new FileReader();
     reader.readAsDataURL(e.target.files[0]);
@@ -33,6 +32,16 @@ function SignUp() {
 
     if (!name || !surname || !email || !password) {
       toast.error('Preencha todos os campos!', {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+      });
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error('Senhas não coincidem!', {
         position: "top-right",
         autoClose: 2500,
         hideProgressBar: false,
@@ -90,9 +99,9 @@ function SignUp() {
       <ToastContainer />
       <Navbar opacity1={0.75} opacity2={1} />
       <div className="auth-wrapper" style={{ height: "100%" }}>
-        <div className="auth-inner" style={{ height: "82%" }}>
+        <div className="auth-inner" style={{ marginTop: "4%", height: "90%" }}>
           <form onSubmit={handleSubmit}>
-            <h3>Registrar</h3>
+            <h3 style={{ marginTop: "-2%" }}>Registrar</h3>
 
             <div className="mb-3">
               <label>Nome</label>
@@ -140,35 +149,46 @@ function SignUp() {
               />
             </div>
 
+            {/* Confirmar senha */}
+            <div className="mb-3">
+              <label>Confirmar senha</label>
+              <input
+                type="password"
+                className="form-control"
+                placeholder="confirme sua senha"
+                minLength={6}
+                maxLength={12}
+                // required
+                onChange={e => setConfirmPassword(e.target.value)}
+              />
+            </div>
+
             <div className="mb-3">
               <label>Imagem</label>
               <input
                 type="file"
                 className="form-control"
                 // required
-                onChange={convertBase64}
+                onChange={e => setImage(e.target.value)}
               />
-              {image && (
-                <img
-                  src={image}
-                  alt=""
-                  style={{ height: '100px', width: '100px' }}
-                />
-              )}
+
             </div>
 
-
+            {/* Botão registrar */}
             <div className="d-grid">
               <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                style={{
+                  boxShadow: "0px 0px 12px 0px rgba(0,0,0,0.2)",
+                }}
                 type="submit"
                 className="btn btn-primary">
                 Registrar
               </motion.button>
             </div>
             <p className="forgot-password text-right">
-              Já registrado <a href="/sign-in">login?</a>
+              <a href="/login">Já registrado?</a>
             </p>
           </form>
         </div >

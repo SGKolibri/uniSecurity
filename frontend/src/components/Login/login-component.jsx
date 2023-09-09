@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import Navbar from '../Navbar/navbar.component';
+import Navbar from '../Navbar/navbar';
 import axios from 'axios';
 import { useSignIn } from 'react-auth-kit';
 import { ToastContainer, toast } from 'react-toastify';
@@ -19,8 +19,13 @@ export default function Login() {
     e.preventDefault();
 
     if (!email || !password) {
-      setError("Preencha todos os campos.");
-      return console.log(error);
+      toast.error('Preencha todos os campos!', {
+        position: "top-right",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+      });
+      return;
     }
 
     try {
@@ -31,6 +36,17 @@ export default function Login() {
       setUser(response.data);
       console.log(response.data);
       console.log("Response: ", response);
+
+      if (response.data.error) {
+        toast.error(response.data.error, {
+          position: "top-right",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          draggable: true
+        });
+        return;
+      }
 
       // 
       if (response.data.token !== undefined) {
@@ -43,13 +59,14 @@ export default function Login() {
         window.location.href = "/home/reg-ocorrencia";
       }
       toast.error("Erro ao realizar login!");
+      console.log(error);
 
     } catch (error) {
-      toast.error("Erro ao realizar login!");
+      toast.error("Falha ao conectar com o servidor!");
       if (!error?.response) {
         setError("Erro ao conectar com o servidor");
-      } else if (error.response.status === 401) {
-        setError("Email ou senha incorretos");
+      } else if (!user) {
+        setError("Erro ao realizar login.");
       }
     }
 
@@ -103,8 +120,11 @@ export default function Login() {
 
             <div className="d-grid">
               <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                style={{
+                  boxShadow: "0px 0px 12px 0px rgba(0,0,0,0.2)",
+                }}
                 type="submit"
                 className="btn btn-primary"
                 background-color="#0850BC"
@@ -112,10 +132,10 @@ export default function Login() {
                 Login
               </motion.button>
             </div>
-            {/* <p className="forgot-password text-right">
-                Esqueceu sua <a href="#">senha?</a>
-              </p> */}
           </form>
+          <p className="forgot-password text-right">
+            Não possui login <a href="/register">registrar?</a>
+          </p>
         </div >
       </div >
     </>
