@@ -1,11 +1,17 @@
 import React, { useState } from 'react'
 import Navbar from '../Navbar/navbar';
 import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { motion } from 'framer-motion';
+import Modal from 'react-bootstrap/Modal';
+import Avatar from 'react-avatar-edit'
+import { useToast } from '@chakra-ui/react'
 
 function SignUp() {
+
+  const toast = useToast()
+
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [email, setEmail] = useState('');
@@ -13,21 +19,16 @@ function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [image, setImage] = useState('');
 
-  //Convert image to base64
-  const convertBase64 = (e) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(e.target.files[0]);
-    reader.onload = () => {
-      console.log(reader.result);
-      setImage(reader.result);
-      localStorage.setItem('userImage', reader.result);
-    };
-    reader.onerror = (error) => {
-      console.log('Error: ', error);
-    };
-  };
+  //Modal
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   const handleSubmit = async e => {
+
+    console.log(image.length)
+
     e.preventDefault();
 
     if (!name || !surname || !email || !password) {
@@ -40,14 +41,30 @@ function SignUp() {
       return;
     }
 
-    if (password !== confirmPassword) {
-      toast.error('Senhas não coincidem!', {
+    //check if image isn't too large
+    if (image && image.length > 100000) {
+      toast({
+        title: "Imagem muito grande!",
+        description: "Selecione um pedaço menor da imagem.",
         position: "top-right",
-        autoClose: 2500,
-        hideProgressBar: false,
-        closeOnClick: true,
-      });
+        status: "error",
+        duration: 2500,
+        isClosable: true,
+      })
       return;
+    }
+
+    if (password !== confirmPassword) {
+      toast({
+        title: "Senhas não coincidem!",
+        description: "As senhas devem ser iguais.",
+        position: "top-right",
+        status: "error",
+        duration: 2500,
+        isClosable: true,
+      })
+      return;
+
     }
 
     try {
@@ -65,32 +82,24 @@ function SignUp() {
 
       // if request not was successful
       if (response.data.error) {
-        toast.error(response.data.error, {
+        toast({
+          title: "Erro ao registrar usuário!",
+          description: response.data.error,
           position: "top-right",
-          autoClose: 2500,
-          hideProgressBar: false,
-          closeOnClick: true,
-          draggable: true
-        });
+          status: "error",
+          duration: 2500,
+        })
 
       } else {
-        toast.success('Usuário registrado com sucesso!', {
+        toast({
+          title: "Usuário registrado com sucesso!",
           position: "top-right",
-          autoClose: 2500,
-          hideProgressBar: false,
-          closeOnClick: true,
-          draggable: true
-        });
+          status: "success",
+          duration: 2500,
+        })
       }
     } catch (error) {
-      console.log("Olha aqui ", error);
-      toast.error(error, {
-        position: "top-right",
-        autoClose: 2500,
-        hideProgressBar: false,
-        closeOnClick: true,
-        draggable: true
-      });
+      console.log(error);
     }
   }
 
@@ -98,11 +107,15 @@ function SignUp() {
     <>
       <ToastContainer />
       <Navbar opacity1={0.75} opacity2={1} />
-      <div className="auth-wrapper" style={{ height: "100%" }}>
-        <div className="auth-inner" style={{ marginTop: "4%", height: "90%" }}>
+      <div className="auth-wrapper">
+        <div
+          className="auth-inner"
+          style={{
+            marginTop: "7%"
+          }}
+        >
           <form onSubmit={handleSubmit}>
-            <h3 style={{ marginTop: "-2%" }}>Registrar</h3>
-
+            <h3>Registrar</h3>
             <div className="mb-3">
               <label>Nome</label>
               <input
@@ -163,15 +176,59 @@ function SignUp() {
               />
             </div>
 
-            <div className="mb-3">
-              <label>Imagem</label>
-              <input
-                type="file"
-                className="form-control"
-                // required
-                onChange={e => setImage(e.target.value)}
-              />
+            {/* Imagem */}
+            <div className="d-grid">
+              <label>Adicionar imagem</label>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.95 }}
+                style={{
+                  boxShadow: "0px 0px 8px 0px rgba(0,0,0,0.2)",
+                  backgroundColor: "#fff",
+                  borderColor: "rgba(0,0,0,0.3)",
+                  borderWidth: "1px",
+                  height: "40px",
+                  marginBottom: "5%",
+                  color: "#000",
+                }}
+                className='btn btn-primary'
+                type="button"
+                onClick={() => (handleShow())}
+              >
+                Selecionar imagem
+              </motion.button>
 
+              {/* Modal */}
+              <Modal show={show} onHide={() => handleClose}>
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title">Selecionar imagem</h5>
+                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleClose}></button>
+                  </div>
+                  <div className="modal-body" style={{
+                    display: "flex",
+                    justifyContent: "center",
+
+                  }}>
+                    <Avatar
+                      alt="profile-img-file-input"
+                      size={150}
+                      onCrop={(preview) => setImage(preview)}
+                      type="file"
+                      className="form-control"
+                      placeholder="selecione uma imagem"
+                      accept="image/jpeg, image/png"
+                    />
+                    <div>
+                      {image && <img alt="profile" src={image} />}
+                    </div>
+                  </div>
+                  <div className="modal-footer">
+                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleClose}>Fechar</button>
+
+                  </div>
+                </div>
+              </Modal>
             </div>
 
             {/* Botão registrar */}
@@ -183,7 +240,9 @@ function SignUp() {
                   boxShadow: "0px 0px 12px 0px rgba(0,0,0,0.2)",
                 }}
                 type="submit"
-                className="btn btn-primary">
+                className="btn btn-primary"
+                onClick={(e) => handleSubmit(e)}
+              >
                 Registrar
               </motion.button>
             </div>

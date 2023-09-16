@@ -31,6 +31,9 @@ require("./src/ocorrenciaDetails");
 const User = mongoose.model("UserInfo");
 const Ocorrencia = mongoose.model("OcorrenciaInfo");
 
+app.use(express.json({ limit: "25mb", extended: true }))
+app.use(express.urlencoded({ limit: "25mb", extended: true, parameterLimit: 50000 }))
+
 
 app.post("/register-user", async (req, res) => {
     const { name, surname, email, password, image } = req.body;
@@ -73,7 +76,7 @@ app.post("/login-user", async (req, res) => {
 
         if (res.status(201)) {
             const jwtToken = jwt.sign({ email: user.email }, JWT_KEY);
-            return res.json({ email: user.email, password: user.password, status: "ok", token: jwtToken });
+            return res.json({ name: user.name, surname: user.surname, email: user.email, password: user.password, status: "ok", token: jwtToken });
         } else {
             return res.json({ status: "error", error: "Usuário não encontrado." });
         }
@@ -81,14 +84,39 @@ app.post("/login-user", async (req, res) => {
     res.json({ status: "error", error: "Senha inválida!" });
 });
 
-app.get("/get-user", async (req, res) => {
+app.get("/get-user-image/", async (req, res) => {
+    const email = req.query.email;
 
     try {
-        const allUser = await User.find({});
-        res.send({ status: "ok", users: allUser });
+        const response = await User.findOne({ email: email });
+        if (response) {
+            res.send({ status: "ok", image: response.image });
+        }
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Server error' });
+    }
+
+});
+
+app.get("/get-user/:email", async (req, res) => {
+    const email = req.params.email;
+
+    try {
+        const user = await User.findOne({ email: email });
+        if (user) {
+            res.send({ status: "ok", name: user.name, surname: user.surname, email: user.email, password: user.password, image: user.image });
+        }
+    } catch (error) {
+        console.error(error);
+    }
+});
+
+app.get("/get-all-users", async (req, res) => {
+    try {
+        const allUsers = await User.find({});
+        res.send({ status: "ok", users: allUsers });
+    } catch (error) {
+        console.error(error);
     }
 });
 

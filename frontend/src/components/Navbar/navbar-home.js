@@ -1,20 +1,36 @@
-import { React } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSignOut } from "react-auth-kit";
-import UserDisplay from "../UserDisplay/user-display";
-import { FaRegUserCircle } from '@react-icons/all-files/fa/FaRegUserCircle';
 import { BiShieldQuarter } from '@react-icons/all-files/bi/BiShieldQuarter';
+import base64 from "react-native-base64";
+import Image from 'react-bootstrap/Image';
 
 function NavbarHome({ opacity1, opacity2 }) {
 
     const signOut = useSignOut();
     const navigate = useNavigate();
 
+    const curUserName = localStorage.getItem('userName') + " " + localStorage.getItem('userSurname');
+    const userImage = localStorage.getItem('userImage');
+
+    //decode image from base64 to svg
+    function ConvertToImageFormat(base64ImageFormat, appTitle) {
+        let url = base64ImageFormat;
+        if (base64ImageFormat.indexOf("data:image/svg;base64,") > -1) {
+            let decodedSvg = base64.decode(
+                base64ImageFormat.replace("data:image/svg;base64,", "")
+            );
+            let blob = new Blob([decodedSvg], { type: "image/svg+xml" });
+            url = URL.createObjectURL(blob);
+        }
+        return <Image src={url} alt={`${appTitle}`} onClick={logOut} />;
+    }
     const logOut = () => {
+        //clear local storage
+        localStorage.clear();
         signOut();
         navigate('/login');
     }
-
     return (
         <>
             <nav className="navbar navbar-expand-lg navbar-light fixed-top"
@@ -32,7 +48,6 @@ function NavbarHome({ opacity1, opacity2 }) {
                             }}
                         />
                     </Link>
-
                     <Link className="navbar-brand" to={'/home/ver-ocorrencia'}
                         style={{
                             color: "#fff"
@@ -66,17 +81,38 @@ function NavbarHome({ opacity1, opacity2 }) {
                             </li>
                         </ul>
                     </div>
-                    <UserDisplay />
+
+                    {/* UserName */}
+                    <div
+                        style={{
+                            float: "right",
+                            marginLeft: "1%",
+                            color: "#fff",
+                            opacity: "1"
+                        }}
+                    >
+                        {curUserName}
+                    </div>
+
                     <div style={{
                         float: "right",
                         height: "40px",
+                        width: "40px",
+                        maxHeight: "40px",
+                        maxWidth: "40px",
                         marginLeft: "1%"
-                    }}>
-                        <FaRegUserCircle style={{
+
+                    }}
+                        className="userWrapper"
+                    >
+                        {/* <FaRegUserCircle style={{
                             width: "100%",
-                            height: "100%"
+                            height: "100%",
                         }}
-                        />
+                            onClick={logOut}
+                        /> */}
+                        {ConvertToImageFormat(userImage, "User")}
+
                     </div>
                 </div>
             </nav >

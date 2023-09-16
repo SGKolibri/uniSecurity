@@ -9,14 +9,14 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
 
     const [nome, setNome] = useState('')
     const [categoria, setCategoria] = useState('')
-    const [horario, setHorario] = useState('')
+    const [hora, sethora] = useState('')
     const [data, setData] = useState('')
     const [localizacao, setLocalizacao] = useState('')
     const [descricao, setDescricao] = useState('')
 
     const patchOcorrencia = () => {
 
-        if (nome === '' || categoria === '' || horario === '' || data === '' || localizacao === '' || descricao === '') {
+        if (nome === '' || categoria === '' || hora === '' || data === '' || localizacao === '' || descricao === '') {
             toast({
                 title: "Campos vazios!",
                 description: "Preencha todos os campos!",
@@ -27,10 +27,10 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
             return;
         }
 
-        console.log(nome, horario, data, categoria, localizacao, descricao);
+        console.log(nome, hora, data, categoria, localizacao, descricao);
         axios.patch(`http://localhost:3000/edit-ocorrencia/${id}`, {
             nome: nome,
-            horario: horario,
+            hora: hora,
             data: data,
             categoria: categoria,
             localizacao: localizacao,
@@ -92,11 +92,11 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
                     <label style={{ color: "red" }}> *</label>
                 </label>
                 <input
-                    id='horario'
+                    id='hora'
                     type="time"
                     className="form-control"
                     placeholder={ocorrenciaDetails[3]}
-                    onChange={(e) => setHorario(e.target.value)}
+                    onChange={(e) => sethora(e.target.value)}
                     required
                 />
 

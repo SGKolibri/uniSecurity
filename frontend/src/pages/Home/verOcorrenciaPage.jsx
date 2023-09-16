@@ -1,12 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import NavbarHome from '../../components/Navbar/navbar-home'
 import { motion } from 'framer-motion'
 import Cards from '../../components/Cards/cards'
 import { BsSearch } from "react-icons/bs";
-import { Button } from '@chakra-ui/react';
-import { Button as NextButton, ButtonGroup } from "@nextui-org/react";
 
 function VerOcorrenciaPage() {
+
+    const [search, setSearch] = useState('')
 
     return (
         <>
@@ -59,14 +59,6 @@ function VerOcorrenciaPage() {
                         width: "25%",
                         height: "7%",
                     }}>
-                        <BsSearch style={{
-                            position: "absolute",
-                            top: "9.5%",
-                            right: "6%",
-                            width: "2%",
-                            height: "30%",
-                            color: "#00abff"
-                        }} />
                         <input
                             type="text"
                             className="form-control"
@@ -78,11 +70,12 @@ function VerOcorrenciaPage() {
                                 borderRadius: "5px",
                                 boxShadow: "2px 2px 5px 0px rgba(0,0,0,0.3)"
                             }}
+                            onChange={(e) => setSearch(e.target.value)}
                         />
 
                     </div>
                     {/* Disply cards das ocorrencias */}
-                    <Cards />
+                    <Cards search={search} />
 
                 </div >
             </div >

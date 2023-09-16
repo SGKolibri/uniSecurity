@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, ButtonGroup } from "@nextui-org/react";
+import { ButtonGroup } from "@nextui-org/react";
 import { motion } from 'framer-motion'
 
 const Pagination = ({ totalCards, cardsPerPage, setCurPage, curPage }) => {

@@ -23,18 +23,17 @@ function CriarOcorrencia() {
     const handleSubmit = async e => {
         e.preventDefault();
 
-        //check if all fields are filled
-        // if (nome === '' || data === '' || hora === '' || categoria === '' || localizacao === '' || descricao === '') {
-        //     toast({
-        //         title: "Preencha todos os campos!",
-        //         description: "Campos não foram preenchidos corretamente.",
-        //         status: "error",
-        //         duration: "2000",
-        //         isClosable: true,
-        //         position: "top-right"
-        //     })
-        //     return;
-        // }
+        if (nome === '' || data === '' || hora === '' || categoria === '' || localizacao === '' || descricao === '') {
+            toast({
+                title: "Preencha todos os campos!",
+                description: "Campos não foram preenchidos corretamente.",
+                status: "error",
+                duration: "2000",
+                isClosable: true,
+                position: "top-right"
+            })
+            return;
+        }
 
         /* Enviar os dados para o backend */
         const response = await fetch("http://localhost:3000/reg-ocorrencia", {
@@ -62,6 +61,8 @@ function CriarOcorrencia() {
         setDescricao("");
         const inputs = document.querySelectorAll('input');
         inputs.forEach(input => input.value = '');
+        const textarea = document.querySelectorAll('textarea');
+        textarea.forEach(textarea => textarea.value = '');
     }
 
     /* Limpar os campos das ocorrências */
@@ -93,6 +94,8 @@ function CriarOcorrencia() {
         setDescricao("");
         const inputs = document.querySelectorAll('input');
         inputs.forEach(input => input.value = '');
+        const textarea = document.querySelectorAll('textarea');
+        textarea.forEach(textarea => textarea.value = '');
         handleClose();
     }
 
@@ -235,7 +238,7 @@ function CriarOcorrencia() {
                 float: "left",
                 width: "25%",
                 marginTop: "-4%",
-                marginRight: "2%"
+                marginRight: "2%",
             }}>
                 Anexar imagem
                 <input
@@ -247,42 +250,45 @@ function CriarOcorrencia() {
             </div>
 
             {/* Botão Salvar */}
-            <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                style={{
-                    position: "absolute",
-                    float: "right",
-                    width: "10%",
-                    right: "4%",
-                    top: "90%",
-                    boxShadow: "0px 0px 12px 0px rgba(0,0,0,0.3)"
-                }}
-                type="submit"
-                className="btn btn-primary"
-                background-color="#4DA325"
-                onClick={handleSubmit}
-            >
-                Salvar
-            </motion.button>
+            <div style={{
+                float: "right",
+                width: "50%",
+                display: "flex",
+                justifyContent: "flex-end",
+                marginTop: "-1.5%",
+            }} className='wrapperButton'>
 
-            {/* Botão Cancelar */}
-            <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                style={{
-                    position: "absolute",
-                    float: "right",
-                    width: "10%",
-                    right: "16%",
-                    top: "90%",
-                    boxShadow: "0px 0px 12px 0px rgba(0,0,0,0.3)"
-                }}
-                className='btn btn-primary'
-                onClick={() => (handleShow())}
-            >
-                Cancelar
-            </motion.button >
+                {/* Botão Cancelar */}
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    style={{
+
+                        width: "25%",
+                        marginRight: "2%",
+                        boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.3)"
+                    }}
+                    className='btn btn-primary'
+                    onClick={() => (handleShow())}
+                >
+                    Cancelar
+                </motion.button >
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    style={{
+
+                        width: "25%",
+                        boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.3)"
+                    }}
+                    type="submit"
+                    className="btn btn-primary"
+                    background-color="#4DA325"
+                    onClick={handleSubmit}
+                >
+                    Salvar
+                </motion.button>
+            </div>
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>

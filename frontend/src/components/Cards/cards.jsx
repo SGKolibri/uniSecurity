@@ -5,7 +5,7 @@ import Card from 'react-bootstrap/Card'
 import Modal from '../Modal/modal-ocorrencia'
 import Pagination from '../Pagination/pagination'
 
-function Cards() {
+function Cards({ search }) {
 
     /* Ocorrências */
     const [ocorrencias, setOcorrencias] = useState();
@@ -37,55 +37,35 @@ function Cards() {
         let i = 0;
 
         let ocorrenciasArr = []
+        let ocorrenciaNomesArr = []
         for (i = 0; i < numberOfOcorrencias; i++) {
 
+            ocorrenciaNomesArr.push(ocorrencias[i].nome);
             ocorrenciasArr.push(
                 <>
-                    {/* Card */}
-                    <motion.div
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.99 }}
-                        style={{
-                            width: '18rem',
-                            display: "inline-block",
-                            margin: "1%",
-                            float: "left"
-                        }}
-                    >
-                        <Card
-                            style={{
-                                position: "relative",
-                                maxHeight: "190px",
-                                minHeight: "190px",
-                                boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.2)"
-                            }}
-                        >
-                            <Card.Body>
-                                <Card.Title>{ocorrencias[i].nome}</Card.Title>
-                                <Card.Subtitle className="mb-2 text-muted">Categoria: {ocorrencias[i].categoria}</Card.Subtitle>
-                                <Card.Text>
-                                    {ocorrencias && (
-                                        <div style={{ height: "75px" }}>
-                                            <h>Data e Hora: {ocorrencias[i].data} - {ocorrencias[i].hora}</h><br />
-                                            <h>Local: {ocorrencias[i].localizacao}</h>
-                                        </div>
-                                    )}
-                                    <div style={{ right: '25%' }}>
-                                        <Modal id={ocorrencias[i]._id} title={ocorrencias[i].nome} text={
-                                            <>
-                                                <h>Categoria: {ocorrencias[i].categoria}</h> <br />
-                                                <h>Data e Hora: {ocorrencias[i].data} - {ocorrencias[i].hora}</h><br />
-                                                <h>Local: {ocorrencias[i].localizacao}</h><br />
-                                                <h>{ocorrencias[i].descricao}</h><br />
-                                            </>
-                                        }
-                                            ocorrenciaDetails={[ocorrencias[i].nome, ocorrencias[i].categoria, ocorrencias[i].data, ocorrencias[i].hora, ocorrencias[i].localizacao, ocorrencias[i].descricao]}
-                                        />
-                                    </div>
-                                </Card.Text>
-                            </Card.Body>
-                        </Card>
-                    </motion.div >
+                    <Card.Title>{ocorrencias[i].nome}</Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">Categoria: {ocorrencias[i].categoria}</Card.Subtitle>
+                    <Card.Text>
+                        {ocorrencias && (
+                            <div style={{ height: "75px" }}>
+                                <h>Data e Hora: {ocorrencias[i].data} - {ocorrencias[i].hora}</h><br />
+                                <h>Local: {ocorrencias[i].localizacao}</h>
+                            </div>
+                        )}
+                        <div style={{ right: '25%' }}>
+                            <Modal id={ocorrencias[i]._id} title={ocorrencias[i].nome} text={
+                                <>
+                                    <h>Categoria: {ocorrencias[i].categoria}</h> <br />
+                                    <h>Data e Hora: {ocorrencias[i].data} - {ocorrencias[i].hora}</h><br />
+                                    <h>Local: {ocorrencias[i].localizacao}</h><br />
+                                    <h>{ocorrencias[i].descricao}</h><br />
+                                </>
+                            }
+                                ocorrenciaDetails={[ocorrencias[i].nome, ocorrencias[i].categoria, ocorrencias[i].data, ocorrencias[i].hora, ocorrencias[i].localizacao, ocorrencias[i].descricao]}
+                            />
+                        </div>
+                    </Card.Text>
+
                 </>
             )
         }
@@ -94,7 +74,66 @@ function Cards() {
 
         return (
             <>
-                {curCards}
+
+                {
+                    search === "" ? curCards.map((ocorrencia) => {
+                        return (
+                            <motion.div
+                                whileHover={{ scale: 1.03 }}
+                                whileTap={{ scale: 0.99 }}
+                                style={{
+                                    width: '18rem',
+                                    display: "inline-block",
+                                    margin: "1%",
+                                    float: "left"
+                                }}
+                            >
+                                <Card
+                                    style={{
+                                        position: "relative",
+                                        maxHeight: "190px",
+                                        minHeight: "190px",
+                                        boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.2)"
+                                    }}
+                                >
+                                    <Card.Body>
+                                        {ocorrencia}
+                                    </Card.Body>
+                                </Card>
+                            </motion.div >
+                        )
+                    })
+                        :
+                        ocorrenciasArr.filter((ocorrencia) => {
+                            return ocorrencia.props.children[0].props.children.toLowerCase().includes(search.toLowerCase())
+                        }).map((ocorrencia) => {
+                            return (
+                                <motion.div
+                                    whileHover={{ scale: 1.03 }}
+                                    whileTap={{ scale: 0.99 }}
+                                    style={{
+                                        width: '18rem',
+                                        display: "inline-block",
+                                        margin: "1%",
+                                        float: "left"
+                                    }}
+                                >
+                                    <Card
+                                        style={{
+                                            position: "relative",
+                                            maxHeight: "190px",
+                                            minHeight: "190px",
+                                            boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.2)"
+                                        }}
+                                    >
+                                        <Card.Body>
+                                            {ocorrencia}
+                                        </Card.Body>
+                                    </Card>
+                                </motion.div >
+                            )
+                        })
+                }
 
             </>
         )

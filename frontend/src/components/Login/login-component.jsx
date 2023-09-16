@@ -5,6 +5,7 @@ import { useSignIn } from 'react-auth-kit';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { motion } from 'framer-motion';
+import { set } from 'mongoose';
 
 export default function Login() {
 
@@ -33,9 +34,15 @@ export default function Login() {
         email: email,
         password: password
       });
+
+      //Get logged in User details
+      const responseUser = await axios.get(`http://localhost:3000/get-user/${email}`);
+
+      localStorage.setItem('userName', responseUser.data.name);
+      localStorage.setItem('userSurname', responseUser.data.surname);
+      localStorage.setItem('userImage', responseUser.data.image); 
+
       setUser(response.data);
-      console.log(response.data);
-      console.log("Response: ", response);
 
       if (response.data.error) {
         toast.error(response.data.error, {
@@ -48,6 +55,8 @@ export default function Login() {
         return;
       }
 
+      localStorage.setItem('userEmail', email);
+
       // 
       if (response.data.token !== undefined) {
         signIn({
@@ -58,8 +67,6 @@ export default function Login() {
         });
         window.location.href = "/home/reg-ocorrencia";
       }
-      toast.error("Erro ao realizar login!");
-      console.log(error);
 
     } catch (error) {
       toast.error("Falha ao conectar com o servidor!");
@@ -69,7 +76,6 @@ export default function Login() {
         setError("Erro ao realizar login.");
       }
     }
-
   };
 
   return (
@@ -103,19 +109,6 @@ export default function Login() {
                 required
                 onChange={(e) => setPassword(e.target.value)}
               />
-            </div>
-
-            <div className="mb-3">
-              <div className="custom-control custom-checkbox">
-                <input
-                  type="checkbox"
-                  className="custom-control-input"
-                  id="customCheck1"
-                />
-                <label onClick={() => alert("lembrado")} className="custom-control-label" htmlFor="customCheck1">
-                  Lembrar de mim
-                </label>
-              </div>
             </div>
 
             <div className="d-grid">
