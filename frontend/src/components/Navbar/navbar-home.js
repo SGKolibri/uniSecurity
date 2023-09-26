@@ -10,11 +10,24 @@ function NavbarHome({ opacity1, opacity2 }) {
     const signOut = useSignOut();
     const navigate = useNavigate();
 
-    const curUserName = localStorage.getItem('userName') + " " + localStorage.getItem('userSurname');
+    const curUserName = localStorage.getItem('userName') !== null ? localStorage.getItem('userName') + " " + localStorage.getItem('userSurname') : localStorage.getItem('userGoogleName');
     const userImage = localStorage.getItem('userImage');
+
+    const googleUserImage = localStorage.getItem('userGoogleImage');
+
+    const logOut = () => {
+        //clear local storage
+        localStorage.clear();
+        signOut();
+        navigate('/login');
+    }
 
     //decode image from base64 to svg
     function ConvertToImageFormat(base64ImageFormat, appTitle) {
+
+        if (base64ImageFormat === null || base64ImageFormat === undefined)
+            return <Image src={googleUserImage} alt="" onClick={logOut} roundedCircle />
+
         let url = base64ImageFormat;
         if (base64ImageFormat.indexOf("data:image/svg;base64,") > -1) {
             let decodedSvg = base64.decode(
@@ -25,12 +38,7 @@ function NavbarHome({ opacity1, opacity2 }) {
         }
         return <Image src={url} alt={`${appTitle}`} onClick={logOut} />;
     }
-    const logOut = () => {
-        //clear local storage
-        localStorage.clear();
-        signOut();
-        navigate('/login');
-    }
+
     return (
         <>
             <nav className="navbar navbar-expand-lg navbar-light fixed-top"
@@ -105,14 +113,7 @@ function NavbarHome({ opacity1, opacity2 }) {
                     }}
                         className="userWrapper"
                     >
-                        {/* <FaRegUserCircle style={{
-                            width: "100%",
-                            height: "100%",
-                        }}
-                            onClick={logOut}
-                        /> */}
-                        {ConvertToImageFormat(userImage, "User")}
-
+                        {ConvertToImageFormat(userImage, "user")}
                     </div>
                 </div>
             </nav >

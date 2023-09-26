@@ -5,7 +5,8 @@ import { useSignIn } from 'react-auth-kit';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { motion } from 'framer-motion';
-import { set } from 'mongoose';
+import { GoogleLogin } from '@react-oauth/google';
+import jwt_decode from "jwt-decode";
 
 export default function Login() {
 
@@ -13,6 +14,8 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
+
+  const [credentialResponse, setCredentialResponse] = useState(null);
 
   const signIn = useSignIn();
 
@@ -40,7 +43,7 @@ export default function Login() {
 
       localStorage.setItem('userName', responseUser.data.name);
       localStorage.setItem('userSurname', responseUser.data.surname);
-      localStorage.setItem('userImage', responseUser.data.image); 
+      localStorage.setItem('userImage', responseUser.data.image);
 
       setUser(response.data);
 
@@ -65,6 +68,7 @@ export default function Login() {
           tokenType: 'Bearer',
           authState: { email: email }
         });
+        localStorage.setItem('loggedIn', true);
         window.location.href = "/home/reg-ocorrencia";
       }
 
@@ -124,6 +128,38 @@ export default function Login() {
               >
                 Login
               </motion.button>
+
+              <hr />
+
+              <div id="google-login"
+                style={{
+                  width: "100%",
+                  justifyContent: "center",
+                  display: "flex",
+                }}
+              >
+                <GoogleLogin
+                  onSuccess={credentialResponse => {
+                    let decoded = jwt_decode(credentialResponse.credential);
+                    setCredentialResponse(decoded);
+                    console.log(decoded);
+                    localStorage.setItem('userGoogleName', decoded.name);
+                    localStorage.setItem('userGoogleImage', decoded.picture);
+                    localStorage.setItem('userGoogleEmail', decoded.email);
+                    signIn({
+                      token: credentialResponse.credential,
+                      expiresIn: 3600, // token expira em 1 hora
+                      tokenType: 'Bearer',
+                      authState: { email: email }
+                    });
+                    window.location.href = "/home/reg-ocorrencia";
+                  }}
+                  onError={() => {
+                    console.log('Login Failed');
+                  }}
+                />
+              </div>
+
             </div>
           </form>
           <p className="forgot-password text-right">
