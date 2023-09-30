@@ -2,10 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import Card from 'react-bootstrap/Card'
 
+import useWindowDimensions from '../Utils/getWindowDimensions'
+
 import Modal from '../Modal/modal-ocorrencia'
 import Pagination from '../Pagination/pagination'
 
 function Cards({ search }) {
+
+    const { width, height } = useWindowDimensions();
+
+    console.log("WIDTH: ", width);
+    console.log("HEIGHT: ", height);
 
     /* Ocorrências */
     const [ocorrencias, setOcorrencias] = useState();
@@ -21,6 +28,27 @@ function Cards({ search }) {
     const [cardsPerPage, setCardsPerPage] = useState(8)
     const lastCardIndex = curPage * cardsPerPage;
     const firstCardIndex = lastCardIndex - cardsPerPage;
+
+    const defineCardsPerPage = () => {
+        if (width < 576) {
+            setCardsPerPage(1)
+        } else if (width < 768) {
+            setCardsPerPage(2)
+        }
+        else if (width < 992) {
+            setCardsPerPage(4)
+        }
+        else if (width < 1200) {
+            setCardsPerPage(6)
+        }
+        else {
+            setCardsPerPage(8)
+        }
+    }
+
+    useEffect(() => {
+        defineCardsPerPage();
+    }, [width]);
 
     useEffect(() => {
         fetch('http://localhost:3000/get-ocorrencia', {
@@ -150,11 +178,14 @@ function Cards({ search }) {
                     height: "84%",
                     border: "1px solid #fff",
                     borderRadius: "10px",
-                    boxShadow: "inset 0px 0px 5px 0px rgba(0,0,0,0.5)"
+                    boxShadow: "inset 0px 0px 5px 0px rgba(0,0,0,0.5)",
+                    overflowY: "auto",
+                    overflowX: "hidden",
                 }}
+                id="ocorrencia-wrapper"
                 className="ocorrencia-wrapper"
-
             >
+
                 {displayCard()}
             </div>
             <Pagination

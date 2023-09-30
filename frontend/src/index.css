@@ -83,3 +83,20 @@ html,
 .forgot-password a {
   color: #167bff;
 }
+
+@media (max-width: 2000px) {
+  .userDetails {
+    display: flex;
+  }
+}
+
+@media (max-width: 372px) {
+  .container {
+    font-size: 1rem;
+  }
+
+  .uniSecuritySlogan {
+    font-size: 0.6rem;
+  }
+}
+

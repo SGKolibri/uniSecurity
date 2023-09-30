@@ -15,8 +15,7 @@ function App() {
 
   const CLIENT_ID = '717615909929-gka7nu14rdaj7jaifrpj1fhmq3lin8d0.apps.googleusercontent.com'
 
-  let googleLogged = localStorage.getItem('googleLoggedIn');
-  console.log("TESTE: ", googleLogged)
+  // let googleLogged = localStorage.getItem('googleLoggedIn');
 
   return (
     <GoogleOAuthProvider clientId={CLIENT_ID} redirect="/home/reg-ocorrencia">

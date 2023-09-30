@@ -25,8 +25,8 @@ mongoose
         console.log(e, "Erro ao conectar ao banco de dados")
     });
 
-require("./src/userDetails");
-require("./src/ocorrenciaDetails");
+require("./schemas/userDetails");
+require("./schemas/ocorrenciaDetails");
 
 const User = mongoose.model("UserInfo");
 const Ocorrencia = mongoose.model("OcorrenciaInfo");
@@ -121,7 +121,7 @@ app.get("/get-all-users", async (req, res) => {
 });
 
 app.post("/reg-ocorrencia", async (req, res) => {
-    const { nome, categoria, data, hora, localizacao, descricao } = req.body;
+    const { nome, categoria, data, hora, localizacao, descricao, image } = req.body;
 
     try {
         await Ocorrencia.create({
@@ -131,6 +131,7 @@ app.post("/reg-ocorrencia", async (req, res) => {
             hora,
             localizacao,
             descricao,
+            image
         });
         res.send({ status: "Sucesso ao registrar ocorrência" });
     } catch (error) {
