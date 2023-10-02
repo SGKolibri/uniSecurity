@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import Card from 'react-bootstrap/Card'
+import base64 from "react-native-base64";
+import Image from 'react-bootstrap/Image';
 
 import useWindowDimensions from '../Utils/getWindowDimensions'
 
@@ -11,8 +13,8 @@ function Cards({ search }) {
 
     const { width, height } = useWindowDimensions();
 
-    console.log("WIDTH: ", width);
-    console.log("HEIGHT: ", height);
+    // console.log("WIDTH: ", width);
+    // console.log("HEIGHT: ", height);
 
     /* Ocorrências */
     const [ocorrencias, setOcorrencias] = useState();
@@ -61,6 +63,21 @@ function Cards({ search }) {
             })
     }, []);
 
+    function ConvertToImageFormat(base64ImageFormat, appTitle) {
+
+        if (!base64ImageFormat) return (<h>Nenhuma imagem anexada.</h>);
+
+        let url = base64ImageFormat;
+        if (base64ImageFormat.indexOf("data:image/svg;base64,") > -1) {
+            let decodedSvg = base64.decode(
+                base64ImageFormat.replace("data:image/svg;base64,", "")
+            );
+            let blob = new Blob([decodedSvg], { type: "image/svg+xml" });
+            url = URL.createObjectURL(blob);
+        }
+        return <Image src={url} alt={`${appTitle}`} style={{ width: "100%", height: "100%" }} />;
+    }
+
     const displayCard = () => {
         let i = 0;
 
@@ -87,6 +104,7 @@ function Cards({ search }) {
                                     <h>Data e Hora: {ocorrencias[i].data} - {ocorrencias[i].hora}</h><br />
                                     <h>Local: {ocorrencias[i].localizacao}</h><br />
                                     <h>{ocorrencias[i].descricao}</h><br />
+                                    {ConvertToImageFormat(ocorrencias[i].image, ocorrencias[i].data)}
                                 </>
                             }
                                 ocorrenciaDetails={[ocorrencias[i].nome, ocorrencias[i].categoria, ocorrencias[i].data, ocorrencias[i].hora, ocorrencias[i].localizacao, ocorrencias[i].descricao]}

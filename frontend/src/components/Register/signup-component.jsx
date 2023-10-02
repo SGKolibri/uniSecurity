@@ -32,12 +32,14 @@ function SignUp() {
     e.preventDefault();
 
     if (!name || !surname || !email || !password) {
-      toast.error('Preencha todos os campos!', {
+      toast({
+        title: "Preencha todos os campos!",
+        description: "Todos os campos devem estar preenchidos.",
         position: "top-right",
-        autoClose: 2500,
-        hideProgressBar: false,
-        closeOnClick: true,
-      });
+        status: "error",
+        duration: 2500,
+        isClosable: true,
+      })
       return;
     }
 
@@ -189,7 +191,7 @@ function SignUp() {
                   borderWidth: "1px",
                   height: "40px",
                   marginBottom: "5%",
-                  color: "#000",
+                  color: "#000"
                 }}
                 className='btn btn-primary'
                 type="button"

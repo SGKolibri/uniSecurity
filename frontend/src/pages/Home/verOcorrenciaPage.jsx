@@ -35,26 +35,10 @@ function VerOcorrenciaPage() {
                         </h>
                     </div>
 
-                    {/* Botão Registrar Ocorrência */}
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.9 }}
-                        style={{
-                            float: "left",
-                            boxShadow: "2px 2px 5px 0 rgba(0,0,0,0.3)"
-                        }}
-                        type="submit"
-                        className="btn btn-primary"
-                        background-color="#00abff"
-                        onClick={() => window.location.href = "/home/reg-ocorrencia"}
-                    >
-                        Registrar Ocorrência
-                    </motion.button>
-
                     {/* Search Bar */}
                     <div style={{
                         float: "right",
-                        marginTop: "0.5%",
+                        marginBottom: "1%",
                         marginRight: "1%",
                         width: "25%",
                         height: "7%",

@@ -13,6 +13,7 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
     const [data, setData] = useState('')
     const [localizacao, setLocalizacao] = useState('')
     const [descricao, setDescricao] = useState('')
+    const [image, setImage] = useState('')
 
     const patchOcorrencia = () => {
 
@@ -34,7 +35,8 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
             data: data,
             categoria: categoria,
             localizacao: localizacao,
-            descricao: descricao
+            descricao: descricao,
+            image: image
         })
             .then((response) => {
                 console.log(response);
@@ -53,6 +55,18 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
         setTimeout(() => {
             window.location.reload();
         }, 1250);
+    }
+
+    function encodeImageFileAsURL(element) {
+        let file = element.target.files[0];
+        console.log(element)
+        let reader = new FileReader();
+        reader.addEventListener("load", function () {
+            console.log("READER: ", reader.result);
+            setImage(reader.result);
+            console.log("IMAGE: ", image)
+        });
+        reader.readAsDataURL(file);
     }
 
     return (
@@ -200,7 +214,7 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
                     type="file"
                     className="form-control"
                     placeholder="imagem"
-                    onChange={e => this.setState({ image: e.target.value })}
+                    onChange={e => (encodeImageFileAsURL(e))}
                 />
             </div>
             <footer>

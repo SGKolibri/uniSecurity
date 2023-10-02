@@ -2,13 +2,15 @@ import React, { useState } from 'react'
 import Navbar from '../Navbar/navbar';
 import axios from 'axios';
 import { useSignIn } from 'react-auth-kit';
-import { ToastContainer, toast } from 'react-toastify';
+import { useToast } from '@chakra-ui/react'
 import 'react-toastify/dist/ReactToastify.css';
 import { motion } from 'framer-motion';
 import { GoogleLogin } from '@react-oauth/google';
 import jwt_decode from "jwt-decode";
 
 export default function Login() {
+
+  const toast = useToast();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,12 +25,13 @@ export default function Login() {
     e.preventDefault();
 
     if (!email || !password) {
-      toast.error('Preencha todos os campos!', {
+      toast({
+        title: "Preencha todos os campos.",
         position: "top-right",
-        autoClose: 2500,
-        hideProgressBar: false,
-        closeOnClick: true,
-      });
+        status: "error",
+        duration: 2500,
+        isClosable: true,
+      })
       return;
     }
 
@@ -36,9 +39,21 @@ export default function Login() {
       const response = await axios.post("http://localhost:3000/login-user", {
         email: email,
         password: password
-      });
+      })
 
-      //Get logged in User details
+      console.log("Response: ", response.data.error)
+
+      if (response.data.error !== undefined) {
+        toast({
+          title: response.data.error,
+          position: "top-right",
+          status: "error",
+          duration: 2500,
+          isClosable: true,
+        })
+        return;
+      }
+
       const responseUser = await axios.get(`http://localhost:3000/get-user/${email}`);
 
       localStorage.setItem('userName', responseUser.data.name);
@@ -46,21 +61,8 @@ export default function Login() {
       localStorage.setItem('userImage', responseUser.data.image);
 
       setUser(response.data);
-
-      if (response.data.error) {
-        toast.error(response.data.error, {
-          position: "top-right",
-          autoClose: 2500,
-          hideProgressBar: false,
-          closeOnClick: true,
-          draggable: true
-        });
-        return;
-      }
-
       localStorage.setItem('userEmail', email);
 
-      // 
       if (response.data.token !== undefined) {
         signIn({
           token: response.data.token,
@@ -73,7 +75,13 @@ export default function Login() {
       }
 
     } catch (error) {
-      toast.error("Falha ao conectar com o servidor!");
+      toast({
+        title: "Erro ao conectar com o servidor.",
+        position: "top-right",
+        status: "error",
+        duration: 2500,
+        isClosable: true,
+      })
       if (!error?.response) {
         setError("Erro ao conectar com o servidor");
       } else if (!user) {
@@ -84,7 +92,6 @@ export default function Login() {
 
   return (
     <>
-      <ToastContainer />
       <Navbar opacity1={1} opacity2={0.75} />
       <div className="auth-wrapper">
         <div className="auth-inner">
@@ -99,7 +106,7 @@ export default function Login() {
                 type="email"
                 className="form-control"
                 placeholder="digite seu email"
-                required
+                // required
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
@@ -110,15 +117,15 @@ export default function Login() {
                 type="password"
                 className="form-control"
                 placeholder="digite sua senha"
-                required
+                // required
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
 
             <div className="d-grid">
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 style={{
                   boxShadow: "0px 0px 12px 0px rgba(0,0,0,0.2)",
                 }}

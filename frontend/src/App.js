@@ -8,13 +8,13 @@ import Login from './components/Login/login-component'
 import SignUp from './components/Register/signup-component'
 import RegOcorrencia from './pages/Home/regOcorrenciaPage'
 import VerOcorrencia from './pages/Home/verOcorrenciaPage'
+import RecoverPassword from './pages/Home/recoverPasswordPage'
 import { RequireAuth } from 'react-auth-kit'
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 function App() {
 
   const CLIENT_ID = '717615909929-gka7nu14rdaj7jaifrpj1fhmq3lin8d0.apps.googleusercontent.com'
-
   // let googleLogged = localStorage.getItem('googleLoggedIn');
 
   return (
@@ -23,6 +23,7 @@ function App() {
         <Route exact path="/*" element={<Login />} />
         <Route className="App" path="/login" element={<Login />} />
         <Route className="App" path="/register" element={<SignUp />} />
+        <Route className="App" path="/recover-password" element={<RecoverPassword />} />
         <Route path="/home/reg-ocorrencia"
           element={
             <RequireAuth loginPath='/login'>

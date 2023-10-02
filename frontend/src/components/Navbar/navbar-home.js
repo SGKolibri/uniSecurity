@@ -5,7 +5,6 @@ import { BiShieldQuarter } from '@react-icons/all-files/bi/BiShieldQuarter';
 import base64 from "react-native-base64";
 import Image from 'react-bootstrap/Image';
 import useWindowDimensions from '../Utils/getWindowDimensions'
-import { FaBars } from '@react-icons/all-files/fa/FaBars';
 
 function NavbarHome({ opacity1, opacity2 }) {
 
@@ -50,7 +49,7 @@ function NavbarHome({ opacity1, opacity2 }) {
             let blob = new Blob([decodedSvg], { type: "image/svg+xml" });
             url = URL.createObjectURL(blob);
         }
-        return <Image src={url} alt={`${appTitle}`} />;
+        return <Image src={url} alt={`${appTitle}`} onClick={logOut} />;
     }
 
     return (
@@ -155,25 +154,7 @@ function NavbarHome({ opacity1, opacity2 }) {
                             </div>
 
                             {/* FaBars */}
-                            <div
-                                style={{
-                                    cursor: "pointer",
-                                    marginLeft: "3%",
-                                    alignContent: "end",
-                                    justifyContent: "center",
-                                    color: "#fff"
-                                }}
-                            >
-                                <FaBars
-                                    style={{
-                                        height: "25px",
-                                        width: "25px",
-                                        color: "#fff"
-                                    }}
-                                    onClick={showSideBar}
-                                />
 
-                            </div>
                         </div>
 
                     </div>

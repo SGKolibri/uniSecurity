@@ -7,8 +7,7 @@ const userDetailsSchema = new mongoose.Schema({
     surname: String,
     email: { type: String, unique: true },
     password: String,
-    image: String,
-    role: String
+    image: String
 }, {
     collection: 'UserInfo'
 });

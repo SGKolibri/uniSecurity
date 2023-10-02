@@ -3,12 +3,14 @@ import { useToast } from '@chakra-ui/react'
 import { motion, transform } from 'framer-motion'
 import Modal from 'react-bootstrap/Modal';
 import useWindowDimensions from '../Utils/getWindowDimensions'
+import ReactCrop from 'react-image-crop'
 
 function CriarOcorrencia() {
 
     const { width, height } = useWindowDimensions();
 
     const toast = useToast();
+
 
     const [nome, setNome] = useState('');
     const [data, setData] = useState('');
@@ -24,15 +26,31 @@ function CriarOcorrencia() {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    const imageMaxSize = 1000000;
+    const acceptedFileTypes = 'image/x-png, image/png, image/jpg, image/jpeg, image/gif';
+    const acceptedFileTypesArray = acceptedFileTypes.split(",").map((item) => { return item.trim() });
+
     //convert image to base64
     function encodeImageFileAsURL(element) {
+
         let file = element.target.files[0];
         console.log(element)
         let reader = new FileReader();
         reader.addEventListener("load", function () {
-            console.log("READER: ", reader.result);
+            console.log("Size 1: ", reader.result.length)
+            if (reader.result.length > imageMaxSize) {
+                console.log("Size: ", reader.result.length)
+                toast({
+                    title: "Imagem muito grande!",
+                    description: "Tamanho máximo de 1MB.",
+                    status: "error",
+                    duration: "2000",
+                    isClosable: true,
+                    position: "top-right"
+                })
+                return;
+            }
             setImage(reader.result);
-            console.log("IMAGE: ", image)
         });
         reader.readAsDataURL(file);
     }
@@ -40,7 +58,7 @@ function CriarOcorrencia() {
     const handleSubmit = async e => {
         e.preventDefault();
 
-        console.log("INSIDE handleSubmit IMAGE: ", image);
+        console.log(image.length)
 
         if (nome === '' || data === '' || hora === '' || categoria === '' || localizacao === '' || descricao === '') {
             toast({
@@ -274,6 +292,9 @@ function CriarOcorrencia() {
                             Anexar imagem
                             <input
                                 type="file"
+                                accept={acceptedFileTypesArray}
+                                multiple={false}
+                                id='image'
                                 className="form-control"
                                 placeholder="imagem"
                                 onChange={e => (encodeImageFileAsURL(e))}

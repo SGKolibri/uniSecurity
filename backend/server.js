@@ -80,22 +80,9 @@ app.post("/login-user", async (req, res) => {
         } else {
             return res.json({ status: "error", error: "Usuário não encontrado." });
         }
+    } else {
+        return res.json({ status: "error", error: "Senha inválida!" });
     }
-    res.json({ status: "error", error: "Senha inválida!" });
-});
-
-app.get("/get-user-image/", async (req, res) => {
-    const email = req.query.email;
-
-    try {
-        const response = await User.findOne({ email: email });
-        if (response) {
-            res.send({ status: "ok", image: response.image });
-        }
-    } catch (error) {
-        console.error(error);
-    }
-
 });
 
 app.get("/get-user/:email", async (req, res) => {
@@ -117,6 +104,25 @@ app.get("/get-all-users", async (req, res) => {
         res.send({ status: "ok", users: allUsers });
     } catch (error) {
         console.error(error);
+    }
+});
+
+// /user/forgot-password
+app.patch("/user-recover-password", async (req, res) => {
+    try {
+
+        const { email } = req.body;
+        console.log("AQUI: ", email);
+        const { password } = req.body;
+        console.log("AQUI 2: ", password);
+        const encryptedPassword = await bcrypt.hash(password, 10);
+
+        const response = User.findOneAndUpdate(email, {
+            password: encryptedPassword,
+        });
+        res.send({ status: "200", user: response });
+    } catch (error) {
+        res.send({ status: "error", error: "Erro ao alterar senha." });
     }
 });
 
@@ -151,7 +157,7 @@ app.get("/get-ocorrencia", async (req, res) => {
 app.patch("/edit-ocorrencia/:id", async (req, res) => {
     try {
         const id = req.params.id;
-        const { nome, data, hora, localizacao, descricao } = req.body;
+        const { nome, data, hora, localizacao, descricao, image } = req.body;
 
         const response = await Ocorrencia.findByIdAndUpdate(id, {
             nome,
@@ -159,6 +165,7 @@ app.patch("/edit-ocorrencia/:id", async (req, res) => {
             hora,
             localizacao,
             descricao,
+            image
         });
         res.send({ status: "ok", ocorrencia: response });
     }
