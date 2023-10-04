@@ -3,15 +3,22 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const JWT_KEY = "y7SxirhO&6cA2%Mb16UziE095&L3#f&6y$o^c4)";
+const bodyParser = require('body-parser');
+const multer = require('multer');
+
+const JWT_KEY = "y7SxirhO&6cA2%Mb16UziE095&L3#f&6y$o^c4)"
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use(express.json({ limit: '25mb' }));
+app.use(express.urlencoded({ limit: '25mb' }));
 
-const port = 3000;
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 const mongoUrl = "mongodb+srv://fecarvalho05:PGUD7w3GZdFGNWWT@cluster0.cgnt3gi.mongodb.net/?retryWrites=true&w=majority";
-/* mongodb + srv://fecarvalho05:PGUD7w3GZdFGNWWT@cluster0.cgnt3gi.mongodb.net/ */
+/* mongodb+srv://fecarvalho05:PGUD7w3GZdFGNWWT@cluster0.cgnt3gi.mongodb.net/ */
 
 mongoose
     .connect(mongoUrl, {
@@ -31,9 +38,16 @@ require("./schemas/ocorrenciaDetails");
 const User = mongoose.model("UserInfo");
 const Ocorrencia = mongoose.model("OcorrenciaInfo");
 
-app.use(express.json({ limit: "25mb", extended: true }))
-app.use(express.urlencoded({ limit: "25mb", extended: true, parameterLimit: 50000 }))
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname)
+    }
+});
 
+const upload = multer({ storage: storage });
 
 app.post("/register-user", async (req, res) => {
     const { name, surname, email, password, image } = req.body;
@@ -107,10 +121,8 @@ app.get("/get-all-users", async (req, res) => {
     }
 });
 
-// /user/forgot-password
 app.patch("/user-recover-password", async (req, res) => {
     try {
-
         const { email } = req.body;
         console.log("AQUI: ", email);
         const { password } = req.body;
@@ -185,6 +197,6 @@ app.delete("/delete-ocorrencia/:id", async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`Server abrido; porta: ${port}`);
+app.listen(3000, () => {
+    console.log(`Server abrido; porta: ${3000}`);
 });

@@ -1,40 +1,34 @@
 import React, { useState } from 'react'
 import { useToast } from '@chakra-ui/react'
 import { motion, transform } from 'framer-motion'
-import Modal from 'react-bootstrap/Modal';
+import Modal from 'react-bootstrap/Modal'
 import useWindowDimensions from '../Utils/getWindowDimensions'
-import ReactCrop from 'react-image-crop'
+import Compressor from 'compressorjs'
 
 function CriarOcorrencia() {
 
-    const { width, height } = useWindowDimensions();
+    const { width } = useWindowDimensions();
 
     const toast = useToast();
 
+    /* Image Compressor */
+    const handleCompressedUpload = (imageToBeCompressed) => {
+        new Compressor(imageToBeCompressed, {
+            quality: 0.8, // 0.6 can also be used, but its not recommended to go below.
+            success: (result) => {
+                const formData = new FormData();
 
-    const [nome, setNome] = useState('');
-    const [data, setData] = useState('');
-    const [hora, setHorario] = useState('');
-    const [categoria, setCategoria] = useState('');
-    const [localizacao, setLocalizacao] = useState('');
-    const [descricao, setDescricao] = useState('');
-    const [image, setImage] = useState('');
+                // The third parameter is required for server
+                formData.append('file', result, result.name);
+                console.log("Inside Compress: ", result);
+                encodeImageFileAsURL(result)
+            },
+        });
+    };
 
-    /* Open and Close Modal */
-    const [show, setShow] = useState(false);
-
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
-    const imageMaxSize = 1000000;
-    const acceptedFileTypes = 'image/x-png, image/png, image/jpg, image/jpeg, image/gif';
-    const acceptedFileTypesArray = acceptedFileTypes.split(",").map((item) => { return item.trim() });
-
-    //convert image to base64
+    /* convert image to base64 */
     function encodeImageFileAsURL(element) {
-
-        let file = element.target.files[0];
-        console.log(element)
+        let file = element;
         let reader = new FileReader();
         reader.addEventListener("load", function () {
             console.log("Size 1: ", reader.result.length)
@@ -55,10 +49,29 @@ function CriarOcorrencia() {
         reader.readAsDataURL(file);
     }
 
+
+    const [nome, setNome] = useState('');
+    const [data, setData] = useState('');
+    const [hora, setHorario] = useState('');
+    const [categoria, setCategoria] = useState('');
+    const [localizacao, setLocalizacao] = useState('');
+    const [descricao, setDescricao] = useState('');
+    const [image, setImage] = useState('');
+
+    /* Open and Close Modal */
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    const imageMaxSize = 1000000;
+    const acceptedFileTypes = 'image/x-png, image/png, image/jpg, image/jpeg, image/gif';
+    const acceptedFileTypesArray = acceptedFileTypes.split(",").map((item) => { return item.trim() });
+
     const handleSubmit = async e => {
         e.preventDefault();
 
-        console.log(image.length)
+        console.log("Inside handle: ", image.length)
 
         if (nome === '' || data === '' || hora === '' || categoria === '' || localizacao === '' || descricao === '') {
             toast({
@@ -80,8 +93,17 @@ function CriarOcorrencia() {
             },
             body: JSON.stringify({ nome, data, hora, categoria, localizacao, descricao, image })
         });
-        console.log(response)
-
+        if (response.date.error) {
+            toast({
+                title: "Erro ao registrar a ocorrência!",
+                description: "Tente novamente.",
+                status: "error",
+                duration: "2000",
+                isClosable: true,
+                position: "top-right"
+            })
+            return;
+        }
         toast({
             title: "Ocorrência registrada!",
             description: "Sucesso ao registrar a ocorrência.",
@@ -297,7 +319,7 @@ function CriarOcorrencia() {
                                 id='image'
                                 className="form-control"
                                 placeholder="imagem"
-                                onChange={e => (encodeImageFileAsURL(e))}
+                                onChange={e => (handleCompressedUpload(e.target.files[0]))}
                             />
                         </div>
 
@@ -367,22 +389,300 @@ function CriarOcorrencia() {
                 </div >
 
             ) : (
-
+                // Mobile Version
                 <div className="auth-wrapper">
                     <div className='auth-inner'
                         style={{
                             height: "100%",
+                            width: "95%",
                             marginTop: "20%",
+                            boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.2)"
                         }}
                     >
-                        <label>
-                            Registrar Ocorrência
-                        </label>
+                        <div
+                            style={{
+                                textAlign: "center",
+                                alignItems: "center",
+                            }}
+                        >
+                            <label
+                                style={{
+                                    fontSize: 28,
+                                }}
+
+                            >
+                                Registrar
+                            </label>
+                        </div>
+
+                        {/* Título */}
+                        <div style={{
+                            width: "100%",
+                            marginTop: "10%",
+                            marginBottom: "5%",
+                        }}>
+                            <label>
+                                Título
+                            </label>
+                            <div
+                                style={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <input
+                                    id='nome'
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Título da ocorrência"
+                                    onChange={(e) => setNome(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        {/* Categoria */}
+                        <div style={{
+                            width: "100%",
+                            marginBottom: "5%",
+                        }}>
+                            <label>
+                                Categoria
+                            </label>
+                            <div
+                                style={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <input
+                                    id='categoria'
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Categoria da ocorrência"
+                                    onChange={(e) => setCategoria(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        {/* Localização */}
+                        <div style={{
+                            width: "100%",
+                            marginBottom: "5%",
+                        }}>
+                            <label>
+                                Localização
+                            </label>
+                            <div
+                                style={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <input
+                                    id='localizacao'
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Localização da ocorrência"
+                                    onChange={(e) => setLocalizacao(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        {/* Descrição */}
+                        <div style={{
+                            width: "100%",
+                            marginBottom: "5%",
+                        }}>
+                            <label>
+                                Descrição
+                            </label>
+                            <div
+                                style={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <textarea
+                                    style={{
+                                        height: transform(0.5, [0, 1], ["-100px", "450px"]),
+                                    }}
+                                    id='descricao'
+                                    type="text"
+                                    cols="40"
+                                    rows="5"
+                                    className="form-control"
+                                    placeholder="Descrição da ocorrência"
+                                    onChange={(e) => setDescricao(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        {/* Data*/}
+                        <div style={{
+                            width: "40%",
+                            marginBottom: "5%",
+                            position: "relative",
+                            display: "inline-block",
+                            float: "left",
+                        }}>
+                            <label>
+                                Data
+                            </label>
+                            <div
+                                style={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <input
+                                    id='data'
+                                    type="date"
+                                    className="form-control"
+                                    placeholder="Data da ocorrência"
+                                    onChange={(e) => setData(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        {/* Horário */}
+                        <div
+                            style={{
+                                width: "40%",
+                                marginBottom: "5%",
+                                position: "relative",
+                                display: "inline-block",
+                                float: "right",
+                            }}
+                        >
+                            <label>
+                                Horário
+                            </label>
+                            <div
+                                style={{
+                                    width: "100%",
+                                    display: "flex",
+                                }}
+                            >
+                                <input
+                                    id='horario'
+                                    type="time"
+                                    className="form-control"
+                                    placeholder="Horário da ocorrência"
+                                    onChange={(e) => setHorario(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        {/* Botão Anexar imagem */}
+                        <div style={{
+                            width: "100%",
+                            marginBottom: "5%",
+                        }}>
+                            <label>
+                                Anexar imagem
+                            </label>
+                            <div
+                                style={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <input
+                                    type="file"
+                                    accept={acceptedFileTypesArray}
+                                    multiple={false}
+                                    id='image'
+                                    className="form-control"
+                                    placeholder="imagem"
+                                    onChange={e => (handleCompressedUpload(e.target.files[0]))}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Botão Cancelar */}
+                        <div style={{
+                            width: "40%",
+                            marginBottom: "5%",
+                            position: "relative",
+                            display: "inline-block",
+                            float: "left",
+                        }}>
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                style={{
+                                    width: "100%",
+                                    boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.3)"
+                                }}
+                                className='btn btn-primary'
+                                onClick={() => (handleShow())}
+                            >
+                                Cancelar
+                            </motion.button >
+                            <Modal show={show} onHide={handleClose} centered>
+                                <Modal.Header closeButton>
+                                    <Modal.Title>Deseja cancelar a ocorrência?</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Footer>
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        variant="primary"
+                                        className='btn btn-primary'
+                                        style={{
+                                            marginRight: "0.5%",
+                                            backgroundColor: "#4DA325",
+                                            border: "none",
+                                            boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.2)",
+
+                                        }}
+                                        onClick={clearFields}>
+                                        Cancelar ocorrência
+                                    </motion.button>
+                                </Modal.Footer>
+                            </Modal>
+                        </div>
+
+                        {/* Botão Salvar */}
+                        <div style={{
+                            width: "40%",
+                            marginBottom: "5%",
+                            position: "relative",
+                            display: "inline-block",
+                            float: "right",
+                        }}>
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                style={{
+                                    width: "100%",
+                                    boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.3)"
+                                }}
+                                type="submit"
+                                className="btn btn-primary"
+                                background-color="#4DA325"
+                                onClick={handleSubmit}
+                            >
+                                Salvar
+                            </motion.button>
+                        </div>
+
                     </div>
                 </div>
 
             )}
-
 
         </>
     )

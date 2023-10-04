@@ -1,5 +1,3 @@
-const { encodeBase64 } = require('bcryptjs');
-const { GridFSBucket } = require('mongodb');
 const mongoose = require('mongoose');
 
 const userDetailsSchema = new mongoose.Schema({
@@ -7,7 +5,10 @@ const userDetailsSchema = new mongoose.Schema({
     surname: String,
     email: { type: String, unique: true },
     password: String,
-    image: String
+    image: {
+        data: Buffer,
+        contentType: String
+    }
 }, {
     collection: 'UserInfo'
 });

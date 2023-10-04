@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import NavbarHome from '../../components/Navbar/navbar-home'
-import { motion } from 'framer-motion'
 import Cards from '../../components/Cards/cards'
-import { BsSearch } from "react-icons/bs";
 
 function VerOcorrenciaPage() {
 
