@@ -75,7 +75,7 @@ function CriarOcorrencia() {
                 status: "error",
                 duration: "2000",
                 isClosable: true,
-                position: "top-right"
+                position: "bottom-center"
             })
             return;
         }
@@ -147,7 +147,6 @@ function CriarOcorrencia() {
 
     return (
         <>
-
             {width > 992 ? (
 
                 <div className="auth-wrapper">
