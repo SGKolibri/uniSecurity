@@ -19,7 +19,6 @@ function CriarOcorrencia() {
                 const formData = new FormData();
                 // The third parameter is required for server
                 formData.append('file', result, result.name);
-                // console.log("Inside Compress: ", result);
                 encodeImageFileAsURL(result)
             },
         });
@@ -29,7 +28,7 @@ function CriarOcorrencia() {
     function encodeImageFileAsURL(element) {
         let file = element;
         let reader = new FileReader();
-        reader.addEventListener("load", function () {       
+        reader.addEventListener("load", function () {
             if (reader.result.length > 1048576) {
                 toast({
                     title: "Imagem muito grande!",
@@ -100,7 +99,7 @@ function CriarOcorrencia() {
             status: "success",
             duration: "2000",
             isClosable: true,
-            position: "top-right"
+            position: "bottom-center"
         })
         clearAllField();
     }
@@ -114,7 +113,7 @@ function CriarOcorrencia() {
                 status: "error",
                 duration: "2000",
                 isClosable: true,
-                position: "top-right"
+                position: "bottom-center"
             })
             handleClose();
             return;
@@ -124,7 +123,7 @@ function CriarOcorrencia() {
             status: "success",
             duration: "2000",
             isClosable: true,
-            position: "top-right"
+            position: "bottom-center"
         })
         clearAllField();
         handleClose();

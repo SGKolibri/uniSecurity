@@ -30,7 +30,7 @@ export default function Login() {
     if (!email || !password) {
       toast({
         title: "Preencha todos os campos.",
-        position: "top-right",
+        position: "bottom-center",
         status: "error",
         duration: 2500,
         isClosable: true,
@@ -51,7 +51,7 @@ export default function Login() {
       if (response.data.error !== undefined) {
         toast({
           title: response.data.error,
-          position: "top-right",
+          position: "bottom-center",
           status: "error",
           duration: 2500,
           isClosable: true,
@@ -81,7 +81,7 @@ export default function Login() {
     } catch (error) {
       toast({
         title: "Erro ao conectar com o servidor.",
-        position: "top-right",
+        position: "bottom-center",
         status: "error",
         duration: 2500,
         isClosable: true,

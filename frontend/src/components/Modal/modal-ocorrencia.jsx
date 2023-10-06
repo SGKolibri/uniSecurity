@@ -146,35 +146,6 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails, pin, unpin, pinne
                     {/* Confirm Delete Modal */}
                     <ConfirmDeleteModal />
 
-                    {/* Pin Button */}
-                    {/* <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        style={{
-                            border: "none",
-                        }}
-                        onClick={() => {
-                            if (pinned) {
-                                unpin();
-                            } else {
-                                pin();
-                            }
-                        }}
-                    >
-                        {!pinned ?
-                            (<AiOutlinePushpin
-                                style={{
-                                    width: "35px",
-                                    height: "35px",
-                                }} />) : (
-                                <AiFillPushpin
-                                    style={{
-                                        width: "35px",
-                                        height: "35px",
-                                    }} />
-                            )}
-                    </motion.button> */}
-
                     {/* Edit Button */}
                     <motion.button
                         whileHover={{ scale: 1.1 }}
