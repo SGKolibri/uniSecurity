@@ -31,8 +31,8 @@ function CriarOcorrencia() {
         let file = element;
         let reader = new FileReader();
         reader.addEventListener("load", function () {
-            console.log("Size 1: ", reader.result.length)
-            if (reader.result.length > imageMaxSize) {
+            console.log(reader.result)
+            if (reader.result.length > 1000000) {
                 console.log("Size: ", reader.result.length)
                 toast({
                     title: "Imagem muito grande!",
@@ -64,7 +64,6 @@ function CriarOcorrencia() {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const imageMaxSize = 1000000;
     const acceptedFileTypes = 'image/x-png, image/png, image/jpg, image/jpeg, image/gif';
     const acceptedFileTypesArray = acceptedFileTypes.split(",").map((item) => { return item.trim() });
 
@@ -85,6 +84,8 @@ function CriarOcorrencia() {
             return;
         }
 
+        console.log(image)
+
         /* Enviar os dados para o backend */
         const response = await fetch("http://localhost:3000/reg-ocorrencia", {
             method: 'POST',
@@ -93,17 +94,9 @@ function CriarOcorrencia() {
             },
             body: JSON.stringify({ nome, data, hora, categoria, localizacao, descricao, image })
         });
-        if (response.date.error) {
-            toast({
-                title: "Erro ao registrar a ocorrência!",
-                description: "Tente novamente.",
-                status: "error",
-                duration: "2000",
-                isClosable: true,
-                position: "top-right"
-            })
-            return;
-        }
+
+        console.log("Response: ", response)
+
         toast({
             title: "Ocorrência registrada!",
             description: "Sucesso ao registrar a ocorrência.",
@@ -395,6 +388,7 @@ function CriarOcorrencia() {
                         style={{
                             height: "100%",
                             width: "95%",
+                            padding: "10%",
                             marginTop: "20%",
                             boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.2)"
                         }}
@@ -405,14 +399,14 @@ function CriarOcorrencia() {
                                 alignItems: "center",
                             }}
                         >
-                            <label
+                            <h
                                 style={{
                                     fontSize: 28,
                                 }}
 
                             >
                                 Registrar
-                            </label>
+                            </h>
                         </div>
 
                         {/* Título */}

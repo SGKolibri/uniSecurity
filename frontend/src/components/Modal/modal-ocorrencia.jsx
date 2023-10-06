@@ -7,8 +7,10 @@ import axios from 'axios';
 import { useToast } from '@chakra-ui/react';
 import Button from 'react-bootstrap/Button';
 import EditarOcorrencia from '../Ocorrencia/editar-ocorrencia';
+import { AiOutlinePushpin } from '@react-icons/all-files/ai/AiOutlinePushpin';
+import { AiFillPushpin } from '@react-icons/all-files/ai/AiFillPushpin';
 
-function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
+function ModalOcorrencia({ title, text, id, ocorrenciaDetails, pin, unpin, pinned }) {
 
     const toast = useToast();
 
@@ -46,7 +48,7 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
     function ConfirmDeleteModal() {
         return (
             <>
-                <Modal show={deleteModalShow} onHide={() => setDeleteModalShow(false)} >
+                <Modal centered show={deleteModalShow} onHide={() => setDeleteModalShow(false)} >
                     <Modal.Header closeButton>
                         <Modal.Title>Deletar Ocorrência</Modal.Title>
                     </Modal.Header>
@@ -109,7 +111,7 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
                 onClick={() => handleShow()}
             />
             {/* Modal */}
-            <Modal show={show} onHide={handleClose} >
+            <Modal centered show={show} onHide={handleClose} >
                 <Modal.Header closeButton>
                     <Modal.Title>{title}</Modal.Title>
                 </Modal.Header>
@@ -139,8 +141,39 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
                             }}
                         />
                     </motion.button>
+
                     {/* Confirm Delete Modal */}
                     <ConfirmDeleteModal />
+
+                    {/* Pin Button */}
+                    <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        style={{
+                            border: "none",
+                        }}
+                        onClick={() => {
+                            if (pinned) {
+                                unpin();
+                            } else {
+                                pin();
+                            }
+                        }}
+                    >
+                        {!pinned ?
+                            (<AiOutlinePushpin
+                                style={{
+                                    width: "35px",
+                                    height: "35px",
+                                }} />) : (
+                                <AiFillPushpin
+                                    style={{
+                                        width: "35px",
+                                        height: "35px",
+                                    }} />
+                            )}
+                    </motion.button>
+
                     {/* Edit Button */}
                     <motion.button
                         whileHover={{ scale: 1.1 }}

@@ -141,6 +141,8 @@ app.patch("/user-recover-password", async (req, res) => {
 app.post("/reg-ocorrencia", async (req, res) => {
     const { nome, categoria, data, hora, localizacao, descricao, image } = req.body;
 
+    console.log("AQUI: ", image);
+
     try {
         await Ocorrencia.create({
             nome,

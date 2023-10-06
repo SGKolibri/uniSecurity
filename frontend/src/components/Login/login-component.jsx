@@ -7,8 +7,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import { motion } from 'framer-motion';
 import { GoogleLogin } from '@react-oauth/google';
 import jwt_decode from "jwt-decode";
+import useWindowDimensions from '../Utils/getWindowDimensions';
+import { Link } from 'react-router-dom';
 
 export default function Login() {
+
+  const { width } = useWindowDimensions()
 
   const toast = useToast();
 
@@ -93,87 +97,218 @@ export default function Login() {
   return (
     <>
       <Navbar opacity1={1} opacity2={0.75} />
-      <div className="auth-wrapper">
-        <div className="auth-inner">
-          <form
-            onSubmit={handleLogin}
-          >
-            <h3>Login</h3>
+      {width > 992 ? (
+        // Desktop Login
+        <div className="auth-wrapper">
+          <div className="auth-inner">
+            <form
+              onSubmit={handleLogin}
+            >
+              <h3>Login</h3>
 
-            <div className="mb-3">
-              <label>Email</label>
-              <input
-                type="email"
-                className="form-control"
-                placeholder="digite seu email"
-                // required
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-
-            <div className="mb-3">
-              <label>Senha</label>
-              <input
-                type="password"
-                className="form-control"
-                placeholder="digite sua senha"
-                // required
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-
-            <div className="d-grid">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                style={{
-                  boxShadow: "0px 0px 12px 0px rgba(0,0,0,0.2)",
-                }}
-                type="submit"
-                className="btn btn-primary"
-                background-color="#0850BC"
-              >
-                Login
-              </motion.button>
-
-              <hr />
-
-              <div id="google-login"
-                style={{
-                  width: "100%",
-                  justifyContent: "center",
-                  display: "flex",
-                }}
-              >
-                <GoogleLogin
-                  onSuccess={credentialResponse => {
-                    let decoded = jwt_decode(credentialResponse.credential);
-                    setCredentialResponse(decoded);
-                    console.log(decoded);
-                    localStorage.setItem('userGoogleName', decoded.name);
-                    localStorage.setItem('userGoogleImage', decoded.picture);
-                    localStorage.setItem('userGoogleEmail', decoded.email);
-                    signIn({
-                      token: credentialResponse.credential,
-                      expiresIn: 3600, // token expira em 1 hora
-                      tokenType: 'Bearer',
-                      authState: { email: email }
-                    });
-                    window.location.href = "/home/reg-ocorrencia";
-                  }}
-                  onError={() => {
-                    console.log('Login Failed');
-                  }}
+              <div className="mb-3">
+                <label>Email</label>
+                <input
+                  type="email"
+                  className="form-control"
+                  placeholder="digite seu email"
+                  // required
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
 
-            </div>
-          </form>
-          <p className="forgot-password text-right">
-            Não possui login <a href="/register">registrar?</a>
-          </p>
+              <div className="mb-3">
+                <label>Senha</label>
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder="digite sua senha"
+                  // required
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+
+              <div className="d-grid">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  style={{
+                    boxShadow: "0px 0px 12px 0px rgba(0,0,0,0.2)",
+                  }}
+                  type="submit"
+                  className="btn btn-primary"
+                  background-color="#0850BC"
+                >
+                  Login
+                </motion.button>
+
+                <hr />
+
+                <div id="google-login"
+                  style={{
+                    width: "100%",
+                    justifyContent: "center",
+                    display: "flex",
+                  }}
+                >
+                  <GoogleLogin
+                    onSuccess={credentialResponse => {
+                      let decoded = jwt_decode(credentialResponse.credential);
+                      setCredentialResponse(decoded);
+                      localStorage.setItem('userGoogleName', decoded.name);
+                      localStorage.setItem('userGoogleImage', decoded.picture);
+                      localStorage.setItem('userGoogleEmail', decoded.email);
+                      signIn({
+                        token: credentialResponse.credential,
+                        expiresIn: 3600, // token expira em 1 hora
+                        tokenType: 'Bearer',
+                        authState: { email: email }
+                      });
+                      window.location.href = "/home/reg-ocorrencia";
+                    }}
+                    onError={() => {
+                      console.log('Login Failed');
+                    }}
+                  />
+                </div>
+
+              </div>
+            </form>
+            <p className="forgot-password text-right">
+              Não possui login <a href="/register">registrar?</a>
+            </p>
+          </div >
         </div >
-      </div >
+      ) : (
+
+        // Mobile Login
+        <div className="auth-wrapper">
+          <div className="auth-inner"
+            style={{
+              height: "100%",
+              width: "95%",
+              padding: "10%",
+              marginTop: "20%",
+              boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.2)"
+            }}
+          >
+            <div
+              style={{
+                textAlign: "center",
+                alignItems: "center",
+              }}
+            >
+              <h style={{ fontSize: 28 }} >
+                Login
+              </h>
+            </div>
+            <hr
+              style={{
+                marginTop: "25px",
+                marginBottom: "50px",
+              }}
+            />
+            <form
+              onSubmit={handleLogin}
+            >
+              <div
+                style={{
+                  marginBottom: "40px"
+                }}
+              >
+                <label>Email</label>
+                <input
+                  type="email"
+                  className="form-control"
+                  placeholder="digite seu email"
+                  // required
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+
+              <div
+                style={{
+                  marginBottom: "50px"
+                }}
+              >
+                <label>Senha</label>
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder="digite sua senha"
+                  // required
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+
+              <div className="d-grid">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  style={{
+                    boxShadow: "0px 0px 12px 0px rgba(0,0,0,0.2)",
+                  }}
+                  type="submit"
+                  className="btn btn-primary"
+                  background-color="#0850BC"
+                >
+                  Login
+                </motion.button>
+
+                <hr
+                  style={{
+                    marginBottom: "30px",
+                  }}
+                />
+
+                <div id="google-login"
+                  style={{
+                    width: "100%",
+                    justifyContent: "center",
+                    display: "flex",
+                  }}
+                >
+                  <GoogleLogin
+                    onSuccess={credentialResponse => {
+                      let decoded = jwt_decode(credentialResponse.credential);
+                      setCredentialResponse(decoded);
+                      localStorage.setItem('userGoogleName', decoded.name);
+                      localStorage.setItem('userGoogleImage', decoded.picture);
+                      localStorage.setItem('userGoogleEmail', decoded.email);
+                      signIn({
+                        token: credentialResponse.credential,
+                        expiresIn: 3600, // token expira em 1 hora
+                        tokenType: 'Bearer',
+                        authState: { email: email }
+                      });
+                      window.location.href = "/home/reg-ocorrencia";
+                    }}
+                    onError={() => {
+                      console.log('Login Failed');
+                    }}
+                  />
+                </div>
+
+                <div
+                  style={{
+                    marginTop: "30px",
+                    alignText: "center",
+                    justifyContent: "center",
+                    display: "flex",
+                  }}
+                >
+                  <p className="forgot-password text-right">
+                    Não possui um login? <Link to="/register">Registre aqui.</Link>
+                  </p>
+                </div>
+
+              </div>
+            </form>
+
+          </div >
+        </div >
+      )}
+
     </>
   )
 

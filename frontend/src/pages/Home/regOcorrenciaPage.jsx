@@ -10,10 +10,7 @@ function RegOcorrenciaPage() {
     return (
         <>
             <NavbarHome opacity1={1} opacity2={0.75} />
-
-            
-                    <CriarOcorrencia />
-                
+            <CriarOcorrencia />
         </>
     )
 }

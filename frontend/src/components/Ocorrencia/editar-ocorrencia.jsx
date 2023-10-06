@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { motion, transform } from 'framer-motion'
 import axios from 'axios'
 import { useToast } from '@chakra-ui/toast'
+import Compressor from 'compressorjs'
 
 function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
 
@@ -28,7 +29,6 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
             return;
         }
 
-        console.log(nome, hora, data, categoria, localizacao, descricao);
         axios.patch(`http://localhost:3000/edit-ocorrencia/${id}`, {
             nome: nome,
             hora: hora,
@@ -57,14 +57,40 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
         }, 1250);
     }
 
+    /* Image Compressor */
+    const handleCompressedUpload = (imageToBeCompressed) => {
+        new Compressor(imageToBeCompressed, {
+            quality: 0.8, // 0.6 can also be used, but its not recommended to go below.
+            success: (result) => {
+                const formData = new FormData();
+
+                // The third parameter is required for server
+                formData.append('file', result, result.name);
+                console.log("Inside Compress: ", result);
+                encodeImageFileAsURL(result)
+            },
+        });
+    };
+
+    /* convert image to base64 */
     function encodeImageFileAsURL(element) {
-        let file = element.target.files[0];
-        console.log(element)
+        let file = element;
         let reader = new FileReader();
         reader.addEventListener("load", function () {
-            console.log("READER: ", reader.result);
+            console.log(reader.result)
+            if (reader.result.length > 1000000) {
+                console.log("Size: ", reader.result.length)
+                toast({
+                    title: "Imagem muito grande!",
+                    description: "Tamanho máximo de 1MB.",
+                    status: "error",
+                    duration: "2000",
+                    isClosable: true,
+                    position: "top-right"
+                })
+                return;
+            }
             setImage(reader.result);
-            console.log("IMAGE: ", image)
         });
         reader.readAsDataURL(file);
     }
@@ -78,12 +104,12 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
                 marginBottom: "1.5%",
             }}>
                 <label>
-                    Nome
+                    Título
                     <label style={{ color: "red" }}> *</label>
                 </label>
                 <input
                     style={{ height: "-100px" }}
-                    id='nome'
+                    id='titulp'
                     type="text"
                     className="form-control"
                     placeholder={ocorrenciaDetails[0]}
@@ -209,12 +235,12 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
                 marginTop: "-4%",
                 marginRight: "2%"
             }}>
-                Anexar imagem
+                Imagem
                 <input
                     type="file"
                     className="form-control"
                     placeholder="imagem"
-                    onChange={e => (encodeImageFileAsURL(e))}
+                    onChange={e => (handleCompressedUpload(e.target.files[0]))}
                 />
             </div>
             <footer>

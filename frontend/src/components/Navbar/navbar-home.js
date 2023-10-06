@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSignOut } from "react-auth-kit";
 import { BiShieldQuarter } from '@react-icons/all-files/bi/BiShieldQuarter';
@@ -12,18 +12,20 @@ import Sidebar from './sidebar'
 import { AiTwotoneEdit } from '@react-icons/all-files/ai/AiTwotoneEdit'
 import { AiOutlineEye } from '@react-icons/all-files/ai/AiOutlineEye'
 import { AiOutlineClose } from '@react-icons/all-files/ai/AiOutlineClose'
+import { useOutsideClick } from "@chakra-ui/react";
 
 function NavbarHome({ opacity1, opacity2 }) {
 
     // User Sidebard
     const [isOpen, setIsOpen] = useState(false);
-
+    const boxRef = useRef();
+    useOutsideClick({
+        ref: boxRef,
+        handler: () => setIsOpen(false),
+    })
     const showSideBar = () => {
-        console.log("showSideBar");
-        console.log(isOpen);
         setIsOpen(!isOpen)
     };
-
 
     const { width } = useWindowDimensions();
 
@@ -231,7 +233,7 @@ function NavbarHome({ opacity1, opacity2 }) {
                                     }}
                                     onClick={showSideBar}
                                 />
-                                <div>
+                                <div ref={boxRef}>
                                     {isOpen ? (
                                         <Sidebar showSideBar={showSideBar}>
                                             <div
@@ -312,6 +314,34 @@ function NavbarHome({ opacity1, opacity2 }) {
                                                         Ver Ocorrência
                                                     </Link>
                                                 </li>
+                                                <li className="nav-item">
+                                                    <div
+                                                        style={{
+                                                            color: "#fff",
+                                                            alignItems: "end",
+                                                            marginTop: "3%",
+                                                            marginLeft: "3%",
+                                                            display: "flex"
+                                                        }}
+                                                        onClick={logOut}
+                                                    >
+                                                        <ImExit
+                                                            style={{
+                                                                width: "24px",
+                                                                height: "24px",
+                                                                cursor: "Pointer",
+                                                            }}
+
+                                                            onClick={logOut}
+                                                        />
+                                                        <h
+                                                            onClick={logOut}
+                                                            style={{ cursor: "pointer" }}
+                                                        >
+                                                            Sair
+                                                        </h>
+                                                    </div>
+                                                </li>
                                             </ul>
                                         </Sidebar>
                                     ) : (
@@ -322,7 +352,7 @@ function NavbarHome({ opacity1, opacity2 }) {
 
                         </div>
                     </nav >
-                </IconContext.Provider>
+                </IconContext.Provider >
             )
             }
 
