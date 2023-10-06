@@ -3,7 +3,6 @@ import Navbar from '../Navbar/navbar';
 import axios from 'axios';
 import { useSignIn } from 'react-auth-kit';
 import { useToast } from '@chakra-ui/react'
-import 'react-toastify/dist/ReactToastify.css';
 import { motion } from 'framer-motion';
 import { GoogleLogin } from '@react-oauth/google';
 import jwt_decode from "jwt-decode";
@@ -47,6 +46,8 @@ export default function Login() {
 
       console.log("Response: ", response.data.error)
 
+      console.log("Token: ", response.data.token)
+
       if (response.data.error !== undefined) {
         toast({
           title: response.data.error,
@@ -74,7 +75,6 @@ export default function Login() {
           tokenType: 'Bearer',
           authState: { email: email }
         });
-        localStorage.setItem('loggedIn', true);
         window.location.href = "/home/reg-ocorrencia";
       }
 

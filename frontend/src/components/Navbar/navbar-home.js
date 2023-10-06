@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSignOut } from "react-auth-kit";
 import { BiShieldQuarter } from '@react-icons/all-files/bi/BiShieldQuarter';

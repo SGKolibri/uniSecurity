@@ -1,5 +1,4 @@
 import React from 'react'
-import 'react-toastify/dist/ReactToastify.css';
 import CriarOcorrencia from '../../components/Ocorrencia/criar-ocorrencia';
 
 /* Components */

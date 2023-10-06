@@ -9,6 +9,7 @@ import Button from 'react-bootstrap/Button';
 import EditarOcorrencia from '../Ocorrencia/editar-ocorrencia';
 import { AiOutlinePushpin } from '@react-icons/all-files/ai/AiOutlinePushpin';
 import { AiFillPushpin } from '@react-icons/all-files/ai/AiFillPushpin';
+import Backdrop from '../Backdrop/backdrop'
 
 function ModalOcorrencia({ title, text, id, ocorrenciaDetails, pin, unpin, pinned }) {
 
@@ -146,7 +147,7 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails, pin, unpin, pinne
                     <ConfirmDeleteModal />
 
                     {/* Pin Button */}
-                    <motion.button
+                    {/* <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         style={{
@@ -172,7 +173,7 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails, pin, unpin, pinne
                                         height: "35px",
                                     }} />
                             )}
-                    </motion.button>
+                    </motion.button> */}
 
                     {/* Edit Button */}
                     <motion.button

@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const bodyParser = require('body-parser');
 const multer = require('multer');
+const env = require('dotenv').config();
 
 const JWT_KEY = "y7SxirhO&6cA2%Mb16UziE095&L3#f&6y$o^c4)"
 
@@ -14,10 +14,7 @@ app.use(cors());
 app.use(express.json({ limit: '25mb' }));
 app.use(express.urlencoded({ limit: '25mb' }));
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-
-const mongoUrl = "mongodb+srv://fecarvalho05:PGUD7w3GZdFGNWWT@cluster0.cgnt3gi.mongodb.net/?retryWrites=true&w=majority";
+const mongoUrl = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER}.mongodb.net/?retryWrites=true&w=majority`;
 /* mongodb+srv://fecarvalho05:PGUD7w3GZdFGNWWT@cluster0.cgnt3gi.mongodb.net/ */
 
 mongoose
@@ -86,7 +83,6 @@ app.post("/login-user", async (req, res) => {
     }
 
     if (await bcrypt.compare(password, user.password)) {
-        const token = jwt.sign({ email: user.email }, JWT_KEY);
 
         if (res.status(201)) {
             const jwtToken = jwt.sign({ email: user.email }, JWT_KEY);
@@ -121,27 +117,25 @@ app.get("/get-all-users", async (req, res) => {
     }
 });
 
-app.patch("/user-recover-password", async (req, res) => {
-    try {
-        const { email } = req.body;
-        console.log("AQUI: ", email);
-        const { password } = req.body;
-        console.log("AQUI 2: ", password);
-        const encryptedPassword = await bcrypt.hash(password, 10);
+// app.patch("/user-recover-password", async (req, res) => {
+//     try {
+//         const { email } = req.body;
+//         console.log("AQUI: ", email);
+//         const { password } = req.body;
+//         console.log("AQUI 2: ", password);
+//         const encryptedPassword = await bcrypt.hash(password, 10);
 
-        const response = User.findOneAndUpdate(email, {
-            password: encryptedPassword,
-        });
-        res.send({ status: "200", user: response });
-    } catch (error) {
-        res.send({ status: "error", error: "Erro ao alterar senha." });
-    }
-});
+//         const response = User.findOneAndUpdate(email, {
+//             password: encryptedPassword,
+//         });
+//         res.send({ status: "200", user: response });
+//     } catch (error) {
+//         res.send({ status: "error", error: "Erro ao alterar senha." });
+//     }
+// });
 
 app.post("/reg-ocorrencia", async (req, res) => {
     const { nome, categoria, data, hora, localizacao, descricao, image } = req.body;
-
-    console.log("AQUI: ", image);
 
     try {
         await Ocorrencia.create({
@@ -200,5 +194,5 @@ app.delete("/delete-ocorrencia/:id", async (req, res) => {
 });
 
 app.listen(3000, () => {
-    console.log(`Server abrido; porta: ${3000}`);
+    console.log(`Server aberto; porta: ${3000}`);
 });

@@ -14,13 +14,12 @@ function CriarOcorrencia() {
     /* Image Compressor */
     const handleCompressedUpload = (imageToBeCompressed) => {
         new Compressor(imageToBeCompressed, {
-            quality: 0.8, // 0.6 can also be used, but its not recommended to go below.
+            quality: 0.8,
             success: (result) => {
                 const formData = new FormData();
-
                 // The third parameter is required for server
                 formData.append('file', result, result.name);
-                console.log("Inside Compress: ", result);
+                // console.log("Inside Compress: ", result);
                 encodeImageFileAsURL(result)
             },
         });
@@ -30,10 +29,8 @@ function CriarOcorrencia() {
     function encodeImageFileAsURL(element) {
         let file = element;
         let reader = new FileReader();
-        reader.addEventListener("load", function () {
-            console.log(reader.result)
-            if (reader.result.length > 1000000) {
-                console.log("Size: ", reader.result.length)
+        reader.addEventListener("load", function () {       
+            if (reader.result.length > 1048576) {
                 toast({
                     title: "Imagem muito grande!",
                     description: "Tamanho máximo de 1MB.",

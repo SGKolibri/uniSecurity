@@ -80,7 +80,7 @@ function Cards({ search }) {
         let firstName = nameArr[0];
         if (nameArr[1] === undefined) return firstName;
         let lastName = nameArr[1];
-        return firstName + " " + lastName;
+        return firstName + " " + lastName + "...";
     }
 
     const displayCard = () => {
@@ -146,7 +146,7 @@ function Cards({ search }) {
                 ocorrenciasArr.push(
                     <>
                         <Card.Title>
-                            {sliceNameAtBlankSpace(ocorrencias[i].nome)}...
+                            {sliceNameAtBlankSpace(ocorrencias[i].nome)}
                         </Card.Title >
 
                         {width > 992 ? (<Card.Subtitle className="mb-2 text-muted">Categoria: {ocorrencias[i].categoria}</Card.Subtitle>)
@@ -213,7 +213,9 @@ function Cards({ search }) {
                     )
                 })
                     :
+                    // Search
                     ocorrenciasArr.filter((ocorrencia) => {
+                        console.log(ocorrencia.props.children[0].props.children)
                         return ocorrencia.props.children[0].props.children.toLowerCase().includes(search.toLowerCase())
                     }).map((ocorrencia) => {
                         return (
