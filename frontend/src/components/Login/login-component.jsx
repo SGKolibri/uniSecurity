@@ -8,6 +8,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import jwt_decode from "jwt-decode";
 import useWindowDimensions from '../Utils/getWindowDimensions';
 import { Link } from 'react-router-dom';
+import bgJPG from '../../images/bg.jpg';
 
 export default function Login() {
 
@@ -97,9 +98,15 @@ export default function Login() {
   return (
     <>
       <Navbar opacity1={1} opacity2={0.75} />
+
       {width > 992 ? (
         // Desktop Login
-        <div className="auth-wrapper">
+        <div className="auth-wrapper"
+          style={{
+            zIndex: -1,
+            backgroundImage: `url(${bgJPG})`,
+          }}
+        >
           <div className="auth-inner">
             <form
               onSubmit={handleLogin}

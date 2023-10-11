@@ -8,6 +8,8 @@ import { useToast } from '@chakra-ui/react'
 import useWindowDimensions from '../Utils/getWindowDimensions';
 import { Link } from 'react-router-dom';
 
+import bgJPG from '../../images/bg.jpg';
+
 function SignUp() {
 
     const toast = useToast()
@@ -113,7 +115,12 @@ function SignUp() {
             {width > 992 ?
                 (
                     // Desktop Version
-                    <div className="auth-wrapper">
+                    <div className="auth-wrapper"
+                        style={{
+                            zIndex: -1,
+                            backgroundImage: `url(${bgJPG})`,
+                        }}
+                    >
                         <div
                             className="auth-inner"
                             style={{
@@ -260,7 +267,12 @@ function SignUp() {
                     </div >
                 ) : (
                     // Mobile Version
-                    <div className="auth-wrapper">
+                    <div className="auth-wrapper"
+                        style={{
+                            zIndex: -1,
+                            backgroundImage: `url(${bgJPG})`,
+                        }}
+                    >
                         <div
                             className="auth-inner"
                             style={{

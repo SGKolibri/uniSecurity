@@ -13,6 +13,7 @@ import { AiTwotoneEdit } from '@react-icons/all-files/ai/AiTwotoneEdit'
 import { AiOutlineEye } from '@react-icons/all-files/ai/AiOutlineEye'
 import { AiOutlineClose } from '@react-icons/all-files/ai/AiOutlineClose'
 import { useOutsideClick } from "@chakra-ui/react";
+import { AiOutlineUser } from '@react-icons/all-files/ai/AiOutlineUser'
 
 function NavbarHome({ opacity1, opacity2 }) {
 
@@ -49,6 +50,10 @@ function NavbarHome({ opacity1, opacity2 }) {
 
         if (base64ImageFormat === null || base64ImageFormat === undefined)
             return <Image src={googleUserImage} alt="" roundedCircle />
+
+        if (googleUserImage === null || googleUserImage === undefined)
+            return <Image src={<AiOutlineUser />} alt="" roundedCircle />
+
 
         let url = base64ImageFormat;
         if (base64ImageFormat.indexOf("data:image/svg;base64,") > -1) {

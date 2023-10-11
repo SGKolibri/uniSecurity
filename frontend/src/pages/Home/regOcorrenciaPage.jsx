@@ -9,6 +9,14 @@ function RegOcorrenciaPage() {
     return (
         <>
             <NavbarHome opacity1={1} opacity2={0.75} />
+            <div
+                style={{
+                    zIndex: -1
+                }}
+                className='bg'
+            >
+
+            </div>
             <CriarOcorrencia />
         </>
     )

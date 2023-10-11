@@ -4,6 +4,7 @@ import { motion, transform } from 'framer-motion'
 import Modal from 'react-bootstrap/Modal'
 import useWindowDimensions from '../Utils/getWindowDimensions'
 import Compressor from 'compressorjs'
+import axios from 'axios'
 
 function CriarOcorrencia() {
 
@@ -66,21 +67,19 @@ function CriarOcorrencia() {
     const handleSubmit = async e => {
         e.preventDefault();
 
-        console.log("Inside handle: ", image.length)
+        // if (nome === '' || data === '' || hora === '' || categoria === '' || localizacao === '' || descricao === '') {
+        //     toast({
+        //         title: "Preencha todos os campos!",
+        //         description: "Campos não foram preenchidos corretamente.",
+        //         status: "error",
+        //         duration: "2000",
+        //         isClosable: true,
+        //         position: "bottom-center"
+        //     })
+        //     return;
+        // }
 
-        if (nome === '' || data === '' || hora === '' || categoria === '' || localizacao === '' || descricao === '') {
-            toast({
-                title: "Preencha todos os campos!",
-                description: "Campos não foram preenchidos corretamente.",
-                status: "error",
-                duration: "2000",
-                isClosable: true,
-                position: "bottom-center"
-            })
-            return;
-        }
-
-        console.log(image)
+        sendEmail();
 
         /* Enviar os dados para o backend */
         const response = await fetch("http://localhost:3000/reg-ocorrencia", {
@@ -90,8 +89,7 @@ function CriarOcorrencia() {
             },
             body: JSON.stringify({ nome, data, hora, categoria, localizacao, descricao, image })
         });
-
-        console.log("Response: ", response)
+        console.log("Response A: ", response)
 
         toast({
             title: "Ocorrência registrada!",
@@ -102,6 +100,10 @@ function CriarOcorrencia() {
             position: "bottom-center"
         })
         clearAllField();
+    }
+
+    const sendEmail = async () => {
+        axios.get('http://localhost:3000/send-email')
     }
 
     /* Limpar os campos das ocorrências */

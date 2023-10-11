@@ -4,15 +4,20 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
+const nodemailer = require('nodemailer');
 const env = require('dotenv').config();
 
-const JWT_KEY = "y7SxirhO&6cA2%Mb16UziE095&L3#f&6y$o^c4)"
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(express.json({ limit: '25mb' }));
-app.use(express.urlencoded({ limit: '25mb' }));
+app.use(express.urlencoded({ limit: '25mb', extended: true }));
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    next();
+});
+
 
 const mongoUrl = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER}.mongodb.net/?retryWrites=true&w=majority`;
 /* mongodb+srv://fecarvalho05:PGUD7w3GZdFGNWWT@cluster0.cgnt3gi.mongodb.net/ */
@@ -45,6 +50,8 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
+const JWT_KEY = "y7SxirhO&6cA2%Mb16UziE095&L3#f&6y$o^c4)"
 
 app.post("/register-user", async (req, res) => {
     const { name, surname, email, password, image } = req.body;
@@ -191,6 +198,38 @@ app.delete("/delete-ocorrencia/:id", async (req, res) => {
     } catch (error) {
         console.error(error);
     }
+});
+
+const userE = "samuelcustodioes@gmail.com"
+const passE = "upcj mhmz ugjm jdab"
+const sendTo = ""
+
+app.get("/send-email", (req, res) => {
+
+    const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        auth: { user: userE, pass: passE }
+    });
+
+    transporter.sendMail({
+        from: userE,
+        to: userE,
+        subject: "UniSecurity - nova ocorrência registrada.",
+        text: "Uma nova ocorrência foi registrada no UniSecurity.",
+        // attachments: [
+        //     {
+        //         filename: "",
+        //         path: "",
+        //         cid: "",
+        //     }
+        // ]
+    }).then(info => {
+        res.send({ status: "ok", info });
+    }).catch(error => {
+        res.send({ status: "error", error });
+    });
+
 });
 
 app.listen(3000, () => {
