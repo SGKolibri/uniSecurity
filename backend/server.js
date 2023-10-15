@@ -225,8 +225,6 @@ app.post('/send-email/:id', (req, res) => {
     })
 });
 
-
-
 const sendUpdatedOcorrenciaEmail = (title) => {
     const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
@@ -252,8 +250,6 @@ const sendUpdatedOcorrenciaEmail = (title) => {
 app.post('/pdf', (req, res) => {
 
     const { nome, categoria, localizacao, data, hora, descricao, image } = req.body;
-
-    console.log(nome, categoria, localizacao, data, hora, descricao);
 
     const stream = res.writeHead(200, {
         'Content-Type': 'application/pdf',

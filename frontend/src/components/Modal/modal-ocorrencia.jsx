@@ -27,9 +27,6 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
     const handleShow = () => setShow(true);
 
     const handleSendEmail = async () => {
-        //use axios to send email
-
-        console.log(ocorrenciaDetails);
 
         axios.post('http://localhost:3000/pdf', {
             nome: ocorrenciaDetails.nome,
