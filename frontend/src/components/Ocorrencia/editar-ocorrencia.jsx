@@ -109,7 +109,7 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
                 </label>
                 <input
                     style={{ height: "-100px" }}
-                    id='titulp'
+                    id='titulo'
                     type="text"
                     className="form-control"
                     placeholder={ocorrenciaDetails[0]}
@@ -221,6 +221,7 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
                     type="text"
                     cols="40"
                     rows="5"
+                    maxLength={500}
                     className="form-control"
                     placeholder={ocorrenciaDetails[5]}
                     onChange={(e) => setDescricao(e.target.value)}

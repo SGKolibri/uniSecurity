@@ -39,7 +39,6 @@ function NavbarHome({ opacity1, opacity2 }) {
     const googleUserImage = localStorage.getItem('userGoogleImage');
 
     const logOut = () => {
-        //clear local storage
         localStorage.clear();
         signOut();
         navigate('/login');
@@ -48,11 +47,16 @@ function NavbarHome({ opacity1, opacity2 }) {
     //decode image from base64 to svg
     function ConvertToImageFormat(base64ImageFormat, appTitle) {
 
-        if (base64ImageFormat === null || base64ImageFormat === undefined)
+        if (base64ImageFormat === null || base64ImageFormat === undefined || base64ImageFormat === "[object Object]") {
+            if (googleUserImage === null || googleUserImage === undefined) {
+                return <AiOutlineUser style={{
+                    width: "38px",
+                    height: "38px"
+                }} />
+            }
             return <Image src={googleUserImage} alt="" roundedCircle />
+        }
 
-        if (googleUserImage === null || googleUserImage === undefined)
-            return <Image src={<AiOutlineUser />} alt="" roundedCircle />
 
 
         let url = base64ImageFormat;

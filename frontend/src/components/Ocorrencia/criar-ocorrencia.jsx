@@ -12,6 +12,14 @@ function CriarOcorrencia() {
 
     const toast = useToast();
 
+    const [nome, setNome] = useState('');
+    const [data, setData] = useState('');
+    const [hora, setHorario] = useState('');
+    const [categoria, setCategoria] = useState('');
+    const [localizacao, setLocalizacao] = useState('');
+    const [descricao, setDescricao] = useState('');
+    const [image, setImage] = useState('');
+
     /* Image Compressor */
     const handleCompressedUpload = (imageToBeCompressed) => {
         new Compressor(imageToBeCompressed, {
@@ -46,15 +54,6 @@ function CriarOcorrencia() {
         reader.readAsDataURL(file);
     }
 
-
-    const [nome, setNome] = useState('');
-    const [data, setData] = useState('');
-    const [hora, setHorario] = useState('');
-    const [categoria, setCategoria] = useState('');
-    const [localizacao, setLocalizacao] = useState('');
-    const [descricao, setDescricao] = useState('');
-    const [image, setImage] = useState('');
-
     /* Open and Close Modal */
     const [show, setShow] = useState(false);
 
@@ -79,17 +78,26 @@ function CriarOcorrencia() {
         //     return;
         // }
 
-        sendEmail();
-
         /* Enviar os dados para o backend */
-        const response = await fetch("http://localhost:3000/reg-ocorrencia", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ nome, data, hora, categoria, localizacao, descricao, image })
-        });
-        console.log("Response A: ", response)
+        axios.post('http://localhost:3000/reg-ocorrencia', {
+            nome,
+            data,
+            hora,
+            categoria,
+            localizacao,
+            descricao,
+            image
+        })
+
+        axios.post('http://localhost:3000/pdf', {
+            nome,
+            data,
+            hora,
+            categoria,
+            localizacao,
+            descricao,
+            image
+        })
 
         toast({
             title: "Ocorrência registrada!",
@@ -100,10 +108,6 @@ function CriarOcorrencia() {
             position: "bottom-center"
         })
         clearAllField();
-    }
-
-    const sendEmail = async () => {
-        axios.get('http://localhost:3000/send-email')
     }
 
     /* Limpar os campos das ocorrências */
@@ -145,7 +149,6 @@ function CriarOcorrencia() {
         const file = document.querySelectorAll('file');
         file.forEach(file => file.value = '');
     }
-
 
     return (
         <>
@@ -289,6 +292,7 @@ function CriarOcorrencia() {
                                 rows="5"
                                 className="form-control"
                                 placeholder="Descrição da ocorrência"
+                                maxLength={500}
                                 onChange={(e) => setDescricao(e.target.value)}
                                 required
                             />
@@ -309,7 +313,9 @@ function CriarOcorrencia() {
                                 id='image'
                                 className="form-control"
                                 placeholder="imagem"
-                                onChange={e => (handleCompressedUpload(e.target.files[0]))}
+                                onChange={e => (
+                                    handleCompressedUpload(e.target.files[0])
+                                )}
                             />
                         </div>
 
@@ -508,6 +514,7 @@ function CriarOcorrencia() {
                                     type="text"
                                     cols="40"
                                     rows="5"
+                                    maxLength={500}
                                     className="form-control"
                                     placeholder="Descrição da ocorrência"
                                     onChange={(e) => setDescricao(e.target.value)}

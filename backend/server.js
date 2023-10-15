@@ -3,16 +3,22 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const multer = require('multer');
 const nodemailer = require('nodemailer');
+const bodyParser = require('body-parser');
 const env = require('dotenv').config();
-
+const validator = require('email-validator');
+const pdfService = require('./service/pdf-service');
+const { image } = require('pdfkit');
 
 const app = express();
-app.use(express.json());
+
+var jsonParser = bodyParser.json({ limit: 1024 * 1024 * 10, type: 'application/json' });
+var urlencodedParser = bodyParser.urlencoded({ extended: true, limit: 1024 * 1024 * 10, type: 'application/x-www-form-urlencoded' });
+app.use(jsonParser);
+app.use(urlencodedParser);
+
 app.use(cors());
-app.use(express.json({ limit: '25mb' }));
-app.use(express.urlencoded({ limit: '25mb', extended: true }));
+
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     next();
@@ -40,21 +46,16 @@ require("./schemas/ocorrenciaDetails");
 const User = mongoose.model("UserInfo");
 const Ocorrencia = mongoose.model("OcorrenciaInfo");
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads')
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.originalname)
-    }
-});
-
-const upload = multer({ storage: storage });
-
 const JWT_KEY = "y7SxirhO&6cA2%Mb16UziE095&L3#f&6y$o^c4)"
 
 app.post("/register-user", async (req, res) => {
-    const { name, surname, email, password, image } = req.body;
+    const { name, surname, email, password } = req.body;
+
+    const isValid = validator.validate(email);
+    if (!isValid) {
+        console.log("Email inválido!");
+        return res.json({ status: "error", error: "Email inválido!" });
+    }
 
     const encryptedPassword = await bcrypt.hash(password, 10);
     try {
@@ -115,32 +116,6 @@ app.get("/get-user/:email", async (req, res) => {
     }
 });
 
-app.get("/get-all-users", async (req, res) => {
-    try {
-        const allUsers = await User.find({});
-        res.send({ status: "ok", users: allUsers });
-    } catch (error) {
-        console.error(error);
-    }
-});
-
-// app.patch("/user-recover-password", async (req, res) => {
-//     try {
-//         const { email } = req.body;
-//         console.log("AQUI: ", email);
-//         const { password } = req.body;
-//         console.log("AQUI 2: ", password);
-//         const encryptedPassword = await bcrypt.hash(password, 10);
-
-//         const response = User.findOneAndUpdate(email, {
-//             password: encryptedPassword,
-//         });
-//         res.send({ status: "200", user: response });
-//     } catch (error) {
-//         res.send({ status: "error", error: "Erro ao alterar senha." });
-//     }
-// });
-
 app.post("/reg-ocorrencia", async (req, res) => {
     const { nome, categoria, data, hora, localizacao, descricao, image } = req.body;
 
@@ -154,6 +129,7 @@ app.post("/reg-ocorrencia", async (req, res) => {
             descricao,
             image
         });
+        sendEmail(nome);
         res.send({ status: "Sucesso ao registrar ocorrência" });
     } catch (error) {
         res.send({ status: "Error" });
@@ -182,6 +158,7 @@ app.patch("/edit-ocorrencia/:id", async (req, res) => {
             descricao,
             image
         });
+        sendUpdatedOcorrenciaEmail(nome);
         res.send({ status: "ok", ocorrencia: response });
     }
     catch (error) {
@@ -200,12 +177,11 @@ app.delete("/delete-ocorrencia/:id", async (req, res) => {
     }
 });
 
+// Send Email Details
 const userE = "samuelcustodioes@gmail.com"
 const passE = "upcj mhmz ugjm jdab"
-const sendTo = ""
 
-app.get("/send-email", (req, res) => {
-
+const sendEmail = (title) => {
     const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
@@ -216,21 +192,60 @@ app.get("/send-email", (req, res) => {
         from: userE,
         to: userE,
         subject: "UniSecurity - nova ocorrência registrada.",
-        text: "Uma nova ocorrência foi registrada no UniSecurity.",
-        // attachments: [
-        //     {
-        //         filename: "",
-        //         path: "",
-        //         cid: "",
-        //     }
-        // ]
-    }).then(info => {
-        res.send({ status: "ok", info });
-    }).catch(error => {
-        res.send({ status: "error", error });
+        text: "Título da ocorrência: " + title,
+        attachments: [
+            {
+                filename: "ocorrencia.pdf",
+                path: "./ocorrencia.pdf",
+                cid: "ocorrencia",
+            }
+        ]
+    })
+}
+
+const sendUpdatedOcorrenciaEmail = (title) => {
+    const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        auth: { user: userE, pass: passE }
     });
 
+    transporter.sendMail({
+        from: userE,
+        to: userE,
+        subject: "UniSecurity - ocorrência atualizada.",
+        text: "Título da ocorrência: " + title,
+        attachments: [
+            {
+                filename: "ocorrencia.pdf",
+                path: "./ocorrencia.pdf",
+                cid: "ocorrencia",
+            }
+        ]
+    })
+}
+
+app.post('/pdf', (req, res) => {
+
+    const { nome, categoria, localizacao, data, hora, descricao } = req.body;
+
+    const stream = res.writeHead(200, {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': 'attachment; filename=invoice.pdf'
+    })
+
+    pdfService.buildPDF(
+        (data) => stream.write(data),
+        () => stream.end(),
+        nome,
+        categoria,
+        localizacao,
+        data,
+        hora,
+        descricao
+    )
 });
+
 
 app.listen(3000, () => {
     console.log(`Server aberto; porta: ${3000}`);
