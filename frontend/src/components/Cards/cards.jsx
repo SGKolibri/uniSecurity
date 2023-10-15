@@ -64,6 +64,7 @@ function Cards({ search }) {
             let blob = new Blob([decodedSvg], { type: "image/svg+xml" });
             url = URL.createObjectURL(blob);
         }
+
         return <Image src={url} alt={`${appTitle}`} style={{ width: "100%", height: "100%" }} />;
     }
 

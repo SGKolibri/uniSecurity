@@ -227,7 +227,7 @@ const sendUpdatedOcorrenciaEmail = (title) => {
 
 app.post('/pdf', (req, res) => {
 
-    const { nome, categoria, localizacao, data, hora, descricao } = req.body;
+    const { nome, categoria, localizacao, data, hora, descricao, image } = req.body;
 
     const stream = res.writeHead(200, {
         'Content-Type': 'application/pdf',
@@ -242,7 +242,8 @@ app.post('/pdf', (req, res) => {
         localizacao,
         data,
         hora,
-        descricao
+        descricao,
+        image
     )
 });
 

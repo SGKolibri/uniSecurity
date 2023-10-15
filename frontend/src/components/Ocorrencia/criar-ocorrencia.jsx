@@ -78,7 +78,6 @@ function CriarOcorrencia() {
         //     return;
         // }
 
-        /* Enviar os dados para o backend */
         axios.post('http://localhost:3000/reg-ocorrencia', {
             nome,
             data,
@@ -305,7 +304,7 @@ function CriarOcorrencia() {
                             marginTop: "-4%",
                             marginRight: "2%",
                         }}>
-                            Anexar imagem
+                            Anexar imagem (opcional)
                             <input
                                 type="file"
                                 accept={acceptedFileTypesArray}

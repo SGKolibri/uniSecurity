@@ -2,15 +2,14 @@ const PDFDocument = require('pdfkit')
 const http = require('http');
 const fs = require('fs');
 
-function buildPDF(dataCallback, endCallback, nome, categoria, localizacao, data, horario, descricao) {
+const buildPDF = async (dataCallback, endCallback, nome, categoria, localizacao, data, horario, descricao, image) => {
 
-    // let nome = "Ocorrência Teste dytaufsdyufasd"
-    // let categoria = "Discussão"
-    // let localizacao = "0123456789"
-    // let data = "01/01/2021"
-    // let horario = "12:00"
-    // let descricao = "01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
-    let image = "service/images/unilogo.jpg"
+    const base64ToJpg = async (base64String, fileName) => {
+        const base64Data = base64String.replace(/^data:image\/jpeg;base64,/, "");
+        await fs.promises.writeFile(`service/images/${fileName}.jpg`, base64Data, 'base64', (err) => {
+            if (err) throw err;
+        });
+    }
 
     const doc = new PDFDocument();
 
@@ -92,7 +91,8 @@ function buildPDF(dataCallback, endCallback, nome, categoria, localizacao, data,
         })
 
     // Ocorrencia Image
-    doc.image(`${image}`, 50, 425, {
+    await base64ToJpg(image, "ocorrencia");
+    doc.image(`service/images/ocorrencia.jpg`, 50, 425, {
         fit: [500, 300],
         align: 'center',
         valign: 'center'
