@@ -128,7 +128,17 @@ function Cards({ search }) {
                                         {ConvertToImageFormat(ocorrencias[i].image, ocorrencias[i].data)}
                                     </>
                                 }
-                                    ocorrenciaDetails={[ocorrencias[i].nome, ocorrencias[i].categoria, ocorrencias[i].data, ocorrencias[i].hora, ocorrencias[i].localizacao, ocorrencias[i].descricao]}
+                                    ocorrenciaDetails={
+                                        {
+                                            nome: ocorrencias[i].nome,
+                                            categoria: ocorrencias[i].categoria,
+                                            data: ocorrencias[i].data,
+                                            hora: ocorrencias[i].hora,
+                                            localizacao: ocorrencias[i].localizacao,
+                                            descricao: ocorrencias[i].descricao,
+                                            image: ocorrencias[i].image
+                                        }
+                                    }
                                     pin={pin} unpin={unpin} pinned={pinned}
                                 />
                             </div>
@@ -173,7 +183,17 @@ function Cards({ search }) {
                                         {ConvertToImageFormat(ocorrencias[i].image, ocorrencias[i].data)}
                                     </>
                                 }
-                                    ocorrenciaDetails={[ocorrencias[i].nome, ocorrencias[i].categoria, ocorrencias[i].data, ocorrencias[i].hora, ocorrencias[i].localizacao, ocorrencias[i].descricao]}
+                                    ocorrenciaDetails={
+                                        {
+                                            nome: ocorrencias[i].nome,
+                                            categoria: ocorrencias[i].categoria,
+                                            data: ocorrencias[i].data,
+                                            hora: ocorrencias[i].hora,
+                                            localizacao: ocorrencias[i].localizacao,
+                                            descricao: ocorrencias[i].descricao,
+                                            image: ocorrencias[i].image
+                                        }
+                                    }
                                 />
 
                             </div>

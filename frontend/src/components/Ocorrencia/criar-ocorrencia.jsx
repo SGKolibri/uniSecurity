@@ -63,8 +63,12 @@ function CriarOcorrencia() {
     const acceptedFileTypes = 'image/x-png, image/png, image/jpg, image/jpeg, image/gif';
     const acceptedFileTypesArray = acceptedFileTypes.split(",").map((item) => { return item.trim() });
 
+    const curEmail = localStorage.getItem('userEmail') === null ? localStorage.getItem('userGoogleEmail') : localStorage.getItem('userEmail');
+
     const handleSubmit = async e => {
         e.preventDefault();
+
+        console.log(curEmail)
 
         // if (nome === '' || data === '' || hora === '' || categoria === '' || localizacao === '' || descricao === '') {
         //     toast({
@@ -85,7 +89,8 @@ function CriarOcorrencia() {
             categoria,
             localizacao,
             descricao,
-            image
+            image,
+            email: curEmail
         })
 
         axios.post('http://localhost:3000/pdf', {

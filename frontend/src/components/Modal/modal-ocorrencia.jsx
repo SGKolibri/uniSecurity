@@ -1,17 +1,16 @@
 import { useState } from 'react';
-import Modal from 'react-bootstrap/Modal';
 import { motion } from 'framer-motion';
 import { BsTrash } from '@react-icons/all-files/bs/BsTrash';
 import { BsPencilSquare } from '@react-icons/all-files/bs/BsPencilSquare';
-import axios from 'axios';
+import { HiOutlineMail } from '@react-icons/all-files/hi/HiOutlineMail'
 import { useToast } from '@chakra-ui/react';
+import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import EditarOcorrencia from '../Ocorrencia/editar-ocorrencia';
-import { AiOutlinePushpin } from '@react-icons/all-files/ai/AiOutlinePushpin';
-import { AiFillPushpin } from '@react-icons/all-files/ai/AiFillPushpin';
 import Backdrop from '../Backdrop/backdrop'
+import axios from 'axios';
 
-function ModalOcorrencia({ title, text, id, ocorrenciaDetails, pin, unpin, pinned }) {
+function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
 
     const toast = useToast();
 
@@ -26,6 +25,35 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails, pin, unpin, pinne
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    const handleSendEmail = async () => {
+        //use axios to send email
+
+        console.log(ocorrenciaDetails);
+
+        axios.post('http://localhost:3000/pdf', {
+            nome: ocorrenciaDetails.nome,
+            categoria: ocorrenciaDetails.categoria,
+            data: ocorrenciaDetails.data,
+            hora: ocorrenciaDetails.hora,
+            localizacao: ocorrenciaDetails.localizacao,
+            descricao: ocorrenciaDetails.descricao,
+            image: ocorrenciaDetails.image,
+        })
+
+        // try {
+        //     await axios.post(`http://localhost:3000/send-email/${id}`);
+        //     toast({
+        //         title: "Email enviado!",
+        //         description: "Email enviado com sucesso!",
+        //         status: "success",
+        //         duration: "3000",
+        //         isClosable: true,
+        //     })
+        // } catch (error) {
+        //     console.log(error);
+        // }
+    }
 
     const handleDelete = async () => {
         //use axios to delete the occurrence
@@ -145,6 +173,26 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails, pin, unpin, pinne
 
                     {/* Confirm Delete Modal */}
                     <ConfirmDeleteModal />
+
+                    {/* Email Button */}
+                    <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        style={{
+                            border: "none",
+                            float: "left",
+                        }}
+                        onClick={handleSendEmail}
+                    >
+                        <HiOutlineMail
+                            style={{
+                                width: "35px",
+                                height: "35px",
+                                float: "left",
+                            }}
+                        />
+                    </motion.button>
+
 
                     {/* Edit Button */}
                     <motion.button

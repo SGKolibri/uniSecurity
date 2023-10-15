@@ -117,7 +117,7 @@ app.get("/get-user/:email", async (req, res) => {
 });
 
 app.post("/reg-ocorrencia", async (req, res) => {
-    const { nome, categoria, data, hora, localizacao, descricao, image } = req.body;
+    const { nome, categoria, data, hora, localizacao, descricao, image, email } = req.body;
 
     try {
         await Ocorrencia.create({
@@ -129,7 +129,7 @@ app.post("/reg-ocorrencia", async (req, res) => {
             descricao,
             image
         });
-        sendEmail(nome);
+        sendEmail(nome, email);
         res.send({ status: "Sucesso ao registrar ocorrência" });
     } catch (error) {
         res.send({ status: "Error" });
@@ -181,7 +181,7 @@ app.delete("/delete-ocorrencia/:id", async (req, res) => {
 const userE = "samuelcustodioes@gmail.com"
 const passE = "upcj mhmz ugjm jdab"
 
-const sendEmail = (title) => {
+const sendEmail = (title, emailTo) => {
     const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
@@ -190,7 +190,7 @@ const sendEmail = (title) => {
 
     transporter.sendMail({
         from: userE,
-        to: userE,
+        to: emailTo,
         subject: "UniSecurity - nova ocorrência registrada.",
         text: "Título da ocorrência: " + title,
         attachments: [
@@ -202,6 +202,30 @@ const sendEmail = (title) => {
         ]
     })
 }
+
+app.post('/send-email/:id', (req, res) => {
+    const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        auth: { user: userE, pass: passE }
+    });
+
+    transporter.sendMail({
+        from: userE,
+        to: emailTo,
+        subject: "UniSecurity - nova ocorrência registrada.",
+        text: "Título da ocorrência: " + title,
+        attachments: [
+            {
+                filename: "ocorrencia.pdf",
+                path: "./ocorrencia.pdf",
+                cid: "ocorrencia",
+            }
+        ]
+    })
+});
+
+
 
 const sendUpdatedOcorrenciaEmail = (title) => {
     const transporter = nodemailer.createTransport({
@@ -228,6 +252,8 @@ const sendUpdatedOcorrenciaEmail = (title) => {
 app.post('/pdf', (req, res) => {
 
     const { nome, categoria, localizacao, data, hora, descricao, image } = req.body;
+
+    console.log(nome, categoria, localizacao, data, hora, descricao);
 
     const stream = res.writeHead(200, {
         'Content-Type': 'application/pdf',

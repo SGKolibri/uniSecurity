@@ -4,11 +4,15 @@ const fs = require('fs');
 
 const buildPDF = async (dataCallback, endCallback, nome, categoria, localizacao, data, horario, descricao, image) => {
 
-    const base64ToJpg = async (base64String, fileName) => {
-        const base64Data = base64String.replace(/^data:image\/jpeg;base64,/, "");
-        await fs.promises.writeFile(`service/images/${fileName}.jpg`, base64Data, 'base64', (err) => {
-            if (err) throw err;
-        });
+
+    if (image !== undefined) {
+        const base64ToJpg = async (base64String, fileName) => {
+            const base64Data = base64String.replace(/^data:image\/jpeg;base64,/, "");
+            await fs.promises.writeFile(`service/images/${fileName}.jpg`, base64Data, 'base64', (err) => {
+                if (err) throw err;
+            });
+        }
+        await base64ToJpg(image, "ocorrencia");
     }
 
     const doc = new PDFDocument();
@@ -91,12 +95,22 @@ const buildPDF = async (dataCallback, endCallback, nome, categoria, localizacao,
         })
 
     // Ocorrencia Image
-    await base64ToJpg(image, "ocorrencia");
-    doc.image(`service/images/ocorrencia.jpg`, 50, 425, {
-        fit: [500, 300],
-        align: 'center',
-        valign: 'center'
-    });
+    if (image !== undefined) {
+        doc.image(`service/images/ocorrencia.jpg`, 50, 425, {
+            fit: [500, 300],
+            align: 'center',
+            valign: 'center'
+        });
+    } else {
+        doc
+            .fontSize(12)
+            .font('Helvetica-Bold')
+            .text('Não há imagem para esta ocorrência.', 50, 425, {
+                align: 'center',
+            })
+    }
+
+    console.log('PDF criado com sucesso!');
 
     doc.end();
 
