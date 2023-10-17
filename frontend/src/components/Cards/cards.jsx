@@ -139,7 +139,6 @@ function Cards({ search }) {
                                             image: ocorrencias[i].image
                                         }
                                     }
-                                    pin={pin} unpin={unpin} pinned={pinned}
                                 />
                             </div>
                         </Card.Text>

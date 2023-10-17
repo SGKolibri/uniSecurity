@@ -110,10 +110,7 @@ const buildPDF = async (dataCallback, endCallback, nome, categoria, localizacao,
             })
     }
 
-    console.log('PDF criado com sucesso!');
-
     doc.end();
-
 }
 
 module.exports = { buildPDF }

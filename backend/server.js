@@ -34,7 +34,7 @@ mongoose
         useUnifiedTopology: true,
     })
     .then(() => {
-        console.log('Banido da Twitch')
+        console.log('Conectado ao MongoDB')
     })
     .catch((e) => {
         console.log(e, "Erro ao conectar ao banco de dados")
@@ -204,6 +204,8 @@ const sendEmail = (title, emailTo) => {
 }
 
 app.post('/send-email/:id', (req, res) => {
+    const { emailTo, title } = req.body;
+
     const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
@@ -213,7 +215,7 @@ app.post('/send-email/:id', (req, res) => {
     transporter.sendMail({
         from: userE,
         to: emailTo,
-        subject: "UniSecurity - nova ocorrência registrada.",
+        subject: "UniSecurity - ocorrência previamente registrada.",
         text: "Título da ocorrência: " + title,
         attachments: [
             {
@@ -271,5 +273,5 @@ app.post('/pdf', (req, res) => {
 
 
 app.listen(3000, () => {
-    console.log(`Server aberto; porta: ${3000}`);
+    console.log(`Servidor aberto; porta: ${3000}`);
 });

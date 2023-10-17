@@ -6,7 +6,6 @@ import useWindowDimensions from '../../components/Utils/getWindowDimensions'
 function VerOcorrenciaPage() {
 
     const { width } = useWindowDimensions()
-
     const [search, setSearch] = useState('')
 
     return (

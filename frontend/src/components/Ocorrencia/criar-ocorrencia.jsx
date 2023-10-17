@@ -192,6 +192,7 @@ function CriarOcorrencia() {
                                 className="form-control"
                                 placeholder="Nome da ocorrência"
                                 onChange={(e) => setNome(e.target.value)}
+                                maxInput={40}
                                 required
                             />
                         </div>
@@ -253,6 +254,7 @@ function CriarOcorrencia() {
                                 className="form-control"
                                 placeholder="Categoria da ocorrência"
                                 onChange={(e) => setCategoria(e.target.value)}
+                                maxLength={40}
                                 required
                             />
 
@@ -273,6 +275,7 @@ function CriarOcorrencia() {
                                 className="form-control"
                                 placeholder="Localização da ocorrência"
                                 onChange={(e) => setLocalizacao(e.target.value)}
+                                maxLength={40}
                                 required
                             />
                         </div>
@@ -438,6 +441,7 @@ function CriarOcorrencia() {
                                     className="form-control"
                                     placeholder="Título da ocorrência"
                                     onChange={(e) => setNome(e.target.value)}
+                                    maxInput={40}
                                     required
                                 />
                             </div>
@@ -464,6 +468,7 @@ function CriarOcorrencia() {
                                     className="form-control"
                                     placeholder="Categoria da ocorrência"
                                     onChange={(e) => setCategoria(e.target.value)}
+                                    maxLength={40}
                                     required
                                 />
                             </div>
@@ -490,6 +495,7 @@ function CriarOcorrencia() {
                                     className="form-control"
                                     placeholder="Localização da ocorrência"
                                     onChange={(e) => setLocalizacao(e.target.value)}
+                                    maxLength={40}
                                     required
                                 />
                             </div>

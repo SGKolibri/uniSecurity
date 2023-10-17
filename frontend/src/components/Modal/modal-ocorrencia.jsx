@@ -7,10 +7,11 @@ import { useToast } from '@chakra-ui/react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import EditarOcorrencia from '../Ocorrencia/editar-ocorrencia';
-import Backdrop from '../Backdrop/backdrop'
 import axios from 'axios';
 
 function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
+
+    const curEmail = localStorage.getItem('userEmail') === null ? localStorage.getItem('userGoogleEmail') : localStorage.getItem('userEmail');
 
     const toast = useToast();
 
@@ -37,19 +38,25 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
             descricao: ocorrenciaDetails.descricao,
             image: ocorrenciaDetails.image,
         })
+        try {
+            toast({
+                title: "Email enviado!",
+                description: "Email enviado com sucesso!",
+                status: "success",
+                duration: "3000",
+                isClosable: true,
+            })
+            const response = await axios.post(`http://localhost:3000/send-email/${id}`, {
+                emailTo: curEmail,
+                title: ocorrenciaDetails.nome,
+            })
+            console.log("YEHRE: ", response);
 
-        // try {
-        //     await axios.post(`http://localhost:3000/send-email/${id}`);
-        //     toast({
-        //         title: "Email enviado!",
-        //         description: "Email enviado com sucesso!",
-        //         status: "success",
-        //         duration: "3000",
-        //         isClosable: true,
-        //     })
-        // } catch (error) {
-        //     console.log(error);
-        // }
+
+        } catch (error) {
+            console.log(error);
+        }
+
     }
 
     const handleDelete = async () => {
@@ -138,7 +145,7 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
             />
             {/* Modal */}
             <Modal centered show={show} onHide={handleClose} >
-                <Modal.Header closeButton>
+                <Modal.Header title="Fechar" closeButton>
                     <Modal.Title>{title}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>{text}</Modal.Body>
@@ -152,8 +159,15 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
                 >
                     {/* Delete Button */}
                     <motion.button
-                        whileHover={{ scale: 1.1 }}
+                        whileHover={{
+                            scale: 1.1,
+                            backgroundColor: "#E8E8E8",
+                            borderRadius: "50%",
+                            width: "35px",
+                            height: "35px",
+                        }}
                         whileTap={{ scale: 0.9 }}
+                        title='Deletar'
                         style={{
                             border: "none",
                             float: "left",
@@ -171,10 +185,17 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
                     {/* Confirm Delete Modal */}
                     <ConfirmDeleteModal />
 
-                    {/* Email Button */}
+                    {/* Send Email Button */}
                     <motion.button
-                        whileHover={{ scale: 1.1 }}
+                        whileHover={{
+                            scale: 1.1,
+                            backgroundColor: "#E8E8E8",
+                            borderRadius: "50%",
+                            width: "40px",
+                            height: "40px",
+                        }}
                         whileTap={{ scale: 0.9 }}
+                        title='Enviar email'
                         style={{
                             border: "none",
                             float: "left",
@@ -183,8 +204,8 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
                     >
                         <HiOutlineMail
                             style={{
-                                width: "35px",
-                                height: "35px",
+                                width: "40px",
+                                height: "40px",
                                 float: "left",
                             }}
                         />
@@ -193,8 +214,16 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
 
                     {/* Edit Button */}
                     <motion.button
-                        whileHover={{ scale: 1.1 }}
+                        whileHover={{
+                            scale: 1.1,
+                            backgroundColor: "#E8E8E8",
+                            borderRadius: "50%",
+                            width: "35px",
+                            height: "35px",
+
+                        }}
                         whileTap={{ scale: 0.9 }}
+                        title='Editar'
                         style={{
                             border: "none",
                         }}
