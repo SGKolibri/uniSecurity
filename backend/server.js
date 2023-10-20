@@ -46,7 +46,7 @@ require("./schemas/ocorrenciaDetails");
 const User = mongoose.model("UserInfo");
 const Ocorrencia = mongoose.model("OcorrenciaInfo");
 
-const JWT_KEY = "y7SxirhO&6cA2%Mb16UziE095&L3#f&6y$o^c4)"
+const JWT_KEY = process.env.JWT_KEY;
 
 app.post("/register-user", async (req, res) => {
     const { name, surname, email, password } = req.body;
@@ -178,8 +178,8 @@ app.delete("/delete-ocorrencia/:id", async (req, res) => {
 });
 
 // Send Email Details
-const userE = "samuelcustodioes@gmail.com"
-const passE = "upcj mhmz ugjm jdab"
+const userE = process.env.EMAIL_HOST_USER;
+const passE = process.env.EMAIL_HOST_PASSWORD;
 
 const sendEmail = (title, emailTo) => {
     const transporter = nodemailer.createTransport({
