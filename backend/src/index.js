@@ -7,7 +7,7 @@ const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const env = require('dotenv').config();
 const validator = require('email-validator');
-const pdfService = require('./service/pdf-service');
+const pdfService = require('../service/pdf-service');
 const { image } = require('pdfkit');
 
 const app = express();
@@ -40,8 +40,8 @@ mongoose
         console.log(e, "Erro ao conectar ao banco de dados")
     });
 
-require("./schemas/userDetails");
-require("./schemas/ocorrenciaDetails");
+require("../schemas/userDetails");
+require("../schemas/ocorrenciaDetails");
 
 const User = mongoose.model("UserInfo");
 const Ocorrencia = mongoose.model("OcorrenciaInfo");
