@@ -36,7 +36,7 @@ export const RecoverPassword = () => {
             return;
         }
 
-        const response = await axios.patch(`http://localhost:3000/user-recover-password`, {
+        const response = await axios.patch(`https://uni-security.vercel.app/user-recover-password`, {
             email: "admin@gmail.com",
             password: password
         })

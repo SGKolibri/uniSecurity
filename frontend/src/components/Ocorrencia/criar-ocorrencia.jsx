@@ -82,7 +82,7 @@ function CriarOcorrencia() {
         //     return;
         // }
 
-        axios.post('http://localhost:3000/reg-ocorrencia', {
+        axios.post('https://uni-security.vercel.app/reg-ocorrencia', {
             nome,
             data,
             hora,
@@ -93,7 +93,7 @@ function CriarOcorrencia() {
             email: curEmail
         })
 
-        axios.post('http://localhost:3000/pdf', {
+        axios.post('https://uni-security.vercel.app/pdf', {
             nome,
             data,
             hora,

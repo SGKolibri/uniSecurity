@@ -29,7 +29,7 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
 
     const handleSendEmail = async () => {
 
-        axios.post('http://localhost:3000/pdf', {
+        axios.post('https://uni-security.vercel.app/pdf', {
             nome: ocorrenciaDetails.nome,
             categoria: ocorrenciaDetails.categoria,
             data: ocorrenciaDetails.data,
@@ -46,7 +46,7 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
                 duration: "3000",
                 isClosable: true,
             })
-            const response = await axios.post(`http://localhost:3000/send-email/${id}`, {
+            const response = await axios.post(`https://uni-security.vercel.app/send-email/${id}`, {
                 emailTo: curEmail,
                 title: ocorrenciaDetails.nome,
             })
@@ -62,7 +62,7 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
     const handleDelete = async () => {
         //use axios to delete the occurrence
         try {
-            await axios.delete(`http://localhost:3000/delete-ocorrencia/${id}`);
+            await axios.delete(`https://uni-security.vercel.app/delete-ocorrencia/${id}`);
             toast({
                 title: "Ocorrência deletada!",
                 description: "Ocorrência deletada com sucesso!",

@@ -74,7 +74,7 @@ function SignUp() {
         }
 
         try {
-            const response = await axios.post("http://localhost:3000/register-user", {
+            const response = await axios.post("https://uni-security.vercel.app/register-user", {
                 name: name,
                 surname: surname,
                 email: email,

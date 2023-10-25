@@ -2,9 +2,6 @@
   "name": "react-login-signup-ui-template",
   "version": "0.1.0",
   "private": true,
-  "engines": {
-    "node": "18.x"
-  },
   "dependencies": {
     "@chakra-ui/react": "^2.8.0",
     "@chakra-ui/toast": "^7.0.0",

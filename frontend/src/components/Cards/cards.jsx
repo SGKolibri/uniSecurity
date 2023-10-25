@@ -39,7 +39,7 @@ function Cards({ search }) {
     const firstCardIndex = lastCardIndex - cardsPerPage;
 
     useEffect(() => {
-        fetch('http://localhost:3000/get-ocorrencia', {
+        fetch('https://uni-security.vercel.app/get-ocorrencia', {
             method: 'GET'
         })
             .then((response) => response.json())

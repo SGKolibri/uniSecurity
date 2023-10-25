@@ -29,7 +29,7 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
             return;
         }
 
-        axios.patch(`http://localhost:3000/edit-ocorrencia/${id}`, {
+        axios.patch(`https://uni-security.vercel.app/edit-ocorrencia/${id}`, {
             nome: nome,
             hora: hora,
             data: data,

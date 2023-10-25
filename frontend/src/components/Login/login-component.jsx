@@ -40,7 +40,7 @@ export default function Login() {
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/login-user", {
+      const response = await axios.post("https://uni-security.vercel.app/login-user", {
         email: email,
         password: password
       })
@@ -60,7 +60,7 @@ export default function Login() {
         return;
       }
 
-      const responseUser = await axios.get(`http://localhost:3000/get-user/${email}`);
+      const responseUser = await axios.get(`https://uni-security.vercel.app/get-user/${email}`);
 
       localStorage.setItem('userName', responseUser.data.name);
       localStorage.setItem('userSurname', responseUser.data.surname);
