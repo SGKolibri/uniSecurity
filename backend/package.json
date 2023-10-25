@@ -27,7 +27,6 @@
     "node-localstorage": "^3.0.5",
     "nodemailer": "^6.9.6",
     "nodemon": "^2.0.22",
-    "pdfkit": "^0.13.0",
-    "vercel": "^32.5.0"
+    "pdfkit": "^0.13.0"
   }
 }
