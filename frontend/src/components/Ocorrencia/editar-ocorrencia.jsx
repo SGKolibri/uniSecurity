@@ -6,6 +6,8 @@ import Compressor from 'compressorjs'
 
 function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
 
+    let ROUTE = process.env.REACT_APP_BACKEND_ROUTE;
+
     const toast = useToast();
 
     const [nome, setNome] = useState('')
@@ -23,13 +25,13 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
                 title: "Campos vazios!",
                 description: "Preencha todos os campos!",
                 status: "error",
-                duration: "3000",
+                duration: "2500",
                 isClosable: true,
             });
             return;
         }
 
-        axios.patch(`https://uni-security.vercel.app/edit-ocorrencia/${id}`, {
+        axios.patch(ROUTE + `edit-ocorrencia/${id}`, {
             nome: nome,
             hora: hora,
             data: data,
@@ -44,7 +46,7 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
                     title: "Ocorrência editada!",
                     description: "Ocorrência editada com sucesso!",
                     status: "success",
-                    duration: "3000",
+                    duration: "2500",
                     isClosable: true,
                 });
             })
@@ -86,7 +88,7 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
                     status: "error",
                     duration: "2000",
                     isClosable: true,
-                    position: "top-right"
+                    position: "center"
                 })
                 return;
             }

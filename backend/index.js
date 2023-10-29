@@ -48,12 +48,14 @@ const Ocorrencia = mongoose.model("OcorrenciaInfo");
 
 const JWT_KEY = process.env.JWT_KEY;
 
-app.get("/hello", (req, res) => {
-    res.send("Hello World!");
+app.get("/running", (req, res) => {
+    res.send("Node application is running!");
 });
 
 app.post("/register-user", async (req, res) => {
-    const { name, surname, email, password } = req.body;
+    const { name, surname, email, password, image } = req.body;
+
+    console.log("IMAGE: " + image)
 
     const isValid = validator.validate(email);
     if (!isValid) {

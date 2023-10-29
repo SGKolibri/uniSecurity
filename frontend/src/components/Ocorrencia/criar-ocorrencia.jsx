@@ -8,6 +8,8 @@ import axios from 'axios'
 
 function CriarOcorrencia() {
 
+    let ROUTE = process.env.REACT_APP_BACKEND_ROUTE;
+
     const { width } = useWindowDimensions();
 
     const toast = useToast();
@@ -45,7 +47,7 @@ function CriarOcorrencia() {
                     status: "error",
                     duration: "2000",
                     isClosable: true,
-                    position: "top-right"
+                    position: "center"
                 })
                 return;
             }
@@ -82,7 +84,7 @@ function CriarOcorrencia() {
         //     return;
         // }
 
-        axios.post('https://uni-security.vercel.app/reg-ocorrencia', {
+        axios.post(ROUTE + 'reg-ocorrencia', {
             nome,
             data,
             hora,
@@ -93,7 +95,7 @@ function CriarOcorrencia() {
             email: curEmail
         })
 
-        axios.post('https://uni-security.vercel.app/pdf', {
+        axios.post(ROUTE + 'pdf', {
             nome,
             data,
             hora,

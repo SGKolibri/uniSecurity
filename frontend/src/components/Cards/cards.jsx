@@ -12,6 +12,8 @@ import Pagination from '../Pagination/pagination'
 
 function Cards({ search }) {
 
+    let ROUTE = process.env.REACT_APP_BACKEND_ROUTE;
+
     /* Get Window Width Dimension */
     const { width } = useWindowDimensions();
 
@@ -39,7 +41,7 @@ function Cards({ search }) {
     const firstCardIndex = lastCardIndex - cardsPerPage;
 
     useEffect(() => {
-        fetch('https://uni-security.vercel.app/get-ocorrencia', {
+        fetch(ROUTE + 'get-ocorrencia', {
             method: 'GET'
         })
             .then((response) => response.json())

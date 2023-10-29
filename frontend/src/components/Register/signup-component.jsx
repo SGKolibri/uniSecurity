@@ -12,6 +12,9 @@ import bgJPG from '../../images/bg.jpg';
 
 function SignUp() {
 
+    let ROUTE = process.env.REACT_APP_BACKEND_ROUTE || process.env.REACT_APP_VERCEL_ROUTE;
+    console.log("ROUTE :", ROUTE)
+
     const toast = useToast()
 
     const { width } = useWindowDimensions();
@@ -26,12 +29,19 @@ function SignUp() {
     //Modal
     const [show, setShow] = useState(false);
 
-    const handleClose = () => setShow(false);
+    const handleClose = () => {
+        setShow(false)
+        toast({
+            title: "Imagem adicionada com sucesso!",
+            position: "center",
+            status: "success",
+            duration: 2500,
+            isClosable: true,
+        })
+    };
     const handleShow = () => setShow(true);
 
     const handleSubmit = async e => {
-
-        console.log(image.length)
 
         e.preventDefault();
 
@@ -39,20 +49,7 @@ function SignUp() {
             toast({
                 title: "Preencha todos os campos!",
                 description: "Todos os campos devem estar preenchidos.",
-                position: "top-right",
-                status: "error",
-                duration: 2500,
-                isClosable: true,
-            })
-            return;
-        }
-
-        //check if image isn't too large
-        if (image && image.length > 100000) {
-            toast({
-                title: "Imagem muito grande!",
-                description: "Selecione um pedaço menor da imagem.",
-                position: "top-right",
+                position: "center",
                 status: "error",
                 duration: 2500,
                 isClosable: true,
@@ -64,17 +61,16 @@ function SignUp() {
             toast({
                 title: "Senhas não coincidem!",
                 description: "As senhas devem ser iguais.",
-                position: "top-right",
+                position: "center",
                 status: "error",
                 duration: 2500,
                 isClosable: true,
             })
             return;
-
         }
 
         try {
-            const response = await axios.post("https://uni-security.vercel.app/register-user", {
+            const response = await axios.post(`${ROUTE}register-user`, {
                 name: name,
                 surname: surname,
                 email: email,
@@ -82,16 +78,12 @@ function SignUp() {
                 image: image
             });
 
-            console.log("Data:", response.data);
-            console.log("Status: ", response.status);
-            console.log("Response: ", response);
-
             // if request not was successful
             if (response.data.error) {
                 toast({
                     title: "Erro ao registrar usuário!",
                     description: response.data.error,
-                    position: "top-right",
+                    position: "center",
                     status: "error",
                     duration: 2500,
                 })
@@ -99,7 +91,7 @@ function SignUp() {
             } else {
                 toast({
                     title: "Usuário registrado com sucesso!",
-                    position: "top-right",
+                    position: "center",
                     status: "success",
                     duration: 2500,
                 })
@@ -231,6 +223,8 @@ function SignUp() {
                                                     className="form-control"
                                                     placeholder="selecione uma imagem"
                                                     accept="image/jpeg, image/png"
+                                                    width={250}
+                                                    height={250}
                                                 />
                                                 <div>
                                                     {image && <img alt="profile" src={image} />}
@@ -399,6 +393,8 @@ function SignUp() {
                                                     className="form-control"
                                                     placeholder="selecione uma imagem"
                                                     accept="image/jpeg, image/png"
+                                                    width={250}
+                                                    height={250}
                                                 />
                                                 <div>
                                                     {image && <img alt="profile" src={image} />}

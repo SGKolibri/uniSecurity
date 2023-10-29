@@ -12,6 +12,8 @@ import bgJPG from '../../images/bg.jpg';
 
 export default function Login() {
 
+  let ROUTE = process.env.REACT_APP_BACKEND_ROUTE || process.env.REACT_APP_VERCEL_ROUTE;
+
   const { width } = useWindowDimensions()
 
   const toast = useToast();
@@ -40,7 +42,7 @@ export default function Login() {
     }
 
     try {
-      const response = await axios.post("https://uni-security.vercel.app/login-user", {
+      const response = await axios.post(ROUTE + "login-user", {
         email: email,
         password: password
       })
@@ -60,7 +62,7 @@ export default function Login() {
         return;
       }
 
-      const responseUser = await axios.get(`https://uni-security.vercel.app/get-user/${email}`);
+      const responseUser = await axios.get(ROUTE + `get-user/${email}`);
 
       localStorage.setItem('userName', responseUser.data.name);
       localStorage.setItem('userSurname', responseUser.data.surname);

@@ -11,6 +11,8 @@ import axios from 'axios';
 
 function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
 
+    let ROUTE = process.env.REACT_APP_BACKEND_ROUTE;
+
     const curEmail = localStorage.getItem('userEmail') === null ? localStorage.getItem('userGoogleEmail') : localStorage.getItem('userEmail');
 
     const toast = useToast();
@@ -29,7 +31,7 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
 
     const handleSendEmail = async () => {
 
-        axios.post('https://uni-security.vercel.app/pdf', {
+        axios.post(ROUTE + 'pdf', {
             nome: ocorrenciaDetails.nome,
             categoria: ocorrenciaDetails.categoria,
             data: ocorrenciaDetails.data,
@@ -43,10 +45,10 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
                 title: "Email enviado!",
                 description: "Email enviado com sucesso!",
                 status: "success",
-                duration: "3000",
+                duration: "2500",
                 isClosable: true,
             })
-            const response = await axios.post(`https://uni-security.vercel.app/send-email/${id}`, {
+            const response = await axios.post(ROUTE + `send-email/${id}`, {
                 emailTo: curEmail,
                 title: ocorrenciaDetails.nome,
             })
@@ -62,12 +64,12 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
     const handleDelete = async () => {
         //use axios to delete the occurrence
         try {
-            await axios.delete(`https://uni-security.vercel.app/delete-ocorrencia/${id}`);
+            await axios.delete(ROUTE + `delete-ocorrencia/${id}`);
             toast({
                 title: "Ocorrência deletada!",
                 description: "Ocorrência deletada com sucesso!",
                 status: "success",
-                duration: "3000",
+                duration: "2500",
                 isClosable: true,
             })
         } catch (error) {

@@ -6,6 +6,8 @@ import { useToast } from '@chakra-ui/react'
 
 export const RecoverPassword = () => {
 
+    let ROUTE = process.env.REACT_APP_BACKEND_ROUTE;
+
     const toast = useToast();
 
     const [password, setPassword] = useState('');
@@ -17,7 +19,7 @@ export const RecoverPassword = () => {
         if (!password || !confirmPassword) {
             toast({
                 title: "Preencha todos os campos.",
-                position: "top-right",
+                position: "center",
                 status: "error",
                 duration: 2500,
                 isClosable: true,
@@ -28,7 +30,7 @@ export const RecoverPassword = () => {
         if (password !== confirmPassword) {
             toast({
                 title: "As senhas não coincidem.",
-                position: "top-right",
+                position: "center",
                 status: "error",
                 duration: 2500,
                 isClosable: true,
@@ -36,7 +38,7 @@ export const RecoverPassword = () => {
             return;
         }
 
-        const response = await axios.patch(`https://uni-security.vercel.app/user-recover-password`, {
+        const response = await axios.patch(ROUTE + `user-recover-password`, {
             email: "admin@gmail.com",
             password: password
         })
@@ -45,7 +47,7 @@ export const RecoverPassword = () => {
                 if (response.data.error !== undefined) {
                     toast({
                         title: response.data.error,
-                        position: "top-right",
+                        position: "center",
                         status: "error",
                         duration: 2500,
                         isClosable: true,
@@ -55,7 +57,7 @@ export const RecoverPassword = () => {
                 console.log("Response 2: ", response.data)
                 toast({
                     title: "Senha alterada com sucesso.",
-                    position: "top-right",
+                    position: "center",
                     status: "success",
                     duration: 2500,
                     isClosable: true,
