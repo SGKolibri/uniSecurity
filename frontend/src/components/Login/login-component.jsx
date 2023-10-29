@@ -199,12 +199,12 @@ export default function Login() {
         <div className="auth-wrapper">
           <div className="auth-inner"
             style={{
-              position: "absolute",
+              position: "relative",
               alignSelf: "center",
-              height: "100%",
               width: "95%",
               padding: "10%",
               marginTop: "20%",
+              top: "0",
               boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.2)"
             }}
           >
