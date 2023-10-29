@@ -116,7 +116,10 @@ function SignUp() {
                         <div
                             className="auth-inner"
                             style={{
-                                marginTop: "7%"
+                                justifySelf: "center",
+                                alignSelf: "center",
+                                position: "relative",
+                                marginTop: "7.5%",
                             }}
                         >
                             <form onSubmit={handleSubmit}>
@@ -270,7 +273,7 @@ function SignUp() {
                         <div
                             className="auth-inner"
                             style={{
-                                height: "100%",
+                                position: "relative",
                                 width: "95%",
                                 padding: "10%",
                                 marginTop: "20%",
