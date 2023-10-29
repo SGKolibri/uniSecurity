@@ -48,7 +48,7 @@ const Ocorrencia = mongoose.model("OcorrenciaInfo");
 
 const JWT_KEY = process.env.JWT_KEY;
 
-app.get("/running", (req, res) => {
+app.get("/", (req, res) => {
     res.send("Node application is running!");
 });
 
