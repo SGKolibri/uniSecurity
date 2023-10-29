@@ -109,7 +109,12 @@ export default function Login() {
             backgroundImage: `url(${bgJPG})`,
           }}
         >
-          <div className="auth-inner">
+          <div className="auth-inner"
+            style={{
+              position: "absolute",
+              alignSelf: "center",
+            }}
+          >
             <form
               onSubmit={handleLogin}
             >
@@ -194,6 +199,8 @@ export default function Login() {
         <div className="auth-wrapper">
           <div className="auth-inner"
             style={{
+              position: "absolute",
+              alignSelf: "center",
               height: "100%",
               width: "95%",
               padding: "10%",
