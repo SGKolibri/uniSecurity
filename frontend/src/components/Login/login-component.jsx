@@ -12,7 +12,7 @@ import bgJPG from '../../images/bg.jpg';
 
 export default function Login() {
 
-  let ROUTE = process.env.REACT_APP_BACKEND_ROUTE || process.env.REACT_APP_VERCEL_ROUTE;
+  let ROUTE = process.env.REACT_APP_BACKEND_ROUTE;
 
   const { width } = useWindowDimensions()
 

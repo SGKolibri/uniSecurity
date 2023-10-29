@@ -5,8 +5,7 @@ import { useToast } from '@chakra-ui/toast'
 import Compressor from 'compressorjs'
 
 function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
-
-    let ROUTE = process.env.REACT_APP_BACKEND_ROUTE || process.env.REACT_APP_VERCEL_ROUTE;
+    let ROUTE = process.env.REACT_APP_BACKEND_ROUTE;
 
     const toast = useToast();
 

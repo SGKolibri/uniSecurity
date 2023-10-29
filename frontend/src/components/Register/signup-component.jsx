@@ -12,7 +12,7 @@ import bgJPG from '../../images/bg.jpg';
 
 function SignUp() {
 
-    let ROUTE = process.env.REACT_APP_BACKEND_ROUTE || process.env.REACT_APP_VERCEL_ROUTE;
+    let ROUTE = process.env.REACT_APP_BACKEND_ROUTE;
     console.log("ROUTE :", ROUTE)
 
     const toast = useToast()

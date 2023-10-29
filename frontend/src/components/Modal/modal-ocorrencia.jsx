@@ -10,8 +10,7 @@ import EditarOcorrencia from '../Ocorrencia/editar-ocorrencia';
 import axios from 'axios';
 
 function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
-
-    let ROUTE = process.env.REACT_APP_BACKEND_ROUTE || process.env.REACT_APP_VERCEL_ROUTE;
+    let ROUTE = process.env.REACT_APP_BACKEND_ROUTE;
 
     const curEmail = localStorage.getItem('userEmail') === null ? localStorage.getItem('userGoogleEmail') : localStorage.getItem('userEmail');
 

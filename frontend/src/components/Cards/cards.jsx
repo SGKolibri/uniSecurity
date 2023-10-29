@@ -11,8 +11,7 @@ import Modal from '../Modal/modal-ocorrencia'
 import Pagination from '../Pagination/pagination'
 
 function Cards({ search }) {
-
-    let ROUTE = process.env.REACT_APP_BACKEND_ROUTE || process.env.REACT_APP_VERCEL_ROUTE;
+    let ROUTE = process.env.REACT_APP_BACKEND_ROUTE;
 
     /* Get Window Width Dimension */
     const { width } = useWindowDimensions();
