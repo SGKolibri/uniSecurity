@@ -8,7 +8,7 @@ import axios from 'axios'
 
 function CriarOcorrencia() {
 
-    let ROUTE = process.env.REACT_APP_BACKEND_ROUTE;
+    let ROUTE = process.env.REACT_APP_BACKEND_ROUTE || process.env.REACT_APP_VERCEL_ROUTE;
 
     const { width } = useWindowDimensions();
 
