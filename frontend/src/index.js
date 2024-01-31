@@ -20,11 +20,11 @@ root.render(
         cookieSecure={false} // settar true para https
       >
         <BrowserRouter>
-          <App />
+            <App />
         </BrowserRouter>
       </AuthProvider>
     </React.StrictMode>
-  </ChakraProvider>
+  </ChakraProvider >
 )
 
 // If you want to start measuring performance in your app, pass a function

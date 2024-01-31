@@ -5,7 +5,15 @@ const userDetailsSchema = new mongoose.Schema({
     surname: String,
     email: { type: String, unique: true },
     password: String,
-    image: String
+    image: String,
+    role: {
+        type: String,
+        default: 'user'
+    },
+    status: {
+        type: Boolean,
+        default: true
+    }
 }, {
     collection: 'UserInfo'
 });

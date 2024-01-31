@@ -7,7 +7,9 @@ const OcorrenciaInfoSchema = new mongoose.Schema({
     data: String,
     localizacao: String,
     descricao: String,
-    image: String
+    image: String,
+    registeredBy: String,
+    
 }, {
     collection: 'OcorrenciaInfo'
 });

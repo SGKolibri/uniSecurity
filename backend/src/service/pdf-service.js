@@ -1,20 +1,27 @@
 const PDFDocument = require('pdfkit')
 const http = require('http');
 const fs = require('fs');
+const path = require('path');
 
-const buildPDF = async (dataCallback, endCallback, nome, categoria, localizacao, data, horario, descricao, image) => {
+const buildPDF = async (dataCallback, endCallback, nome, categoria, localizacao, data, horario, descricao, image, registeredBy) => {
 
+    let format = undefined;
 
     if (image !== undefined) {
-        const base64ToJpg = async (base64String, fileName) => {
-            const base64Data = base64String.replace(/^data:image\/jpeg;base64,/, "");
-            await fs.promises.writeFile(`service/images/${fileName}.jpg`, base64Data, 'base64', (err) => {
+        const base64ToImage = async (base64String, fileName) => {
+            const match = base64String.match(/^data:image\/([a-zA-Z]+);base64,/);
+            if (!match) {
+                throw new Error('Invalid image data');
+            }
+
+            format = match[1];
+            const base64Data = base64String.replace(match[0], "");
+            await fs.promises.writeFile(path.join(__dirname, `/images/${fileName}.${format}`), base64Data, 'base64', (err) => {
                 if (err) throw err;
             });
         }
-        await base64ToJpg(image, "ocorrencia");
+        await base64ToImage(image, "ocorrencia");
     }
-
     const doc = new PDFDocument();
 
     doc.pipe(fs.createWriteStream('ocorrencia.pdf'));
@@ -23,14 +30,15 @@ const buildPDF = async (dataCallback, endCallback, nome, categoria, localizacao,
     doc.on('end', endCallback)
 
     // Uni Logo Image
-    doc.image('service/images/unilogo.jpg', 50, 15, {
+    doc.image(path.join(__dirname, '../service/images/unilogo.jpg'), 50, 15, {
         fit: [100, 100],
     });
 
-    // UniSec Logo Image
-    doc.image('service/images/uniseclogo.jpg', 475, 25, {
+    // UniSec Logo Image    
+    doc.image(path.join(__dirname, '../service/images/uniseclogo.jpg'), 475, 25, {
         fit: [75, 75],
     });
+
 
     // UniSecurity Title
     doc
@@ -78,6 +86,7 @@ const buildPDF = async (dataCallback, endCallback, nome, categoria, localizacao,
         .font('Helvetica-Bold')
         .text(`${horario}`, 450, 255)
 
+
     // Separator Line
     doc
         .moveTo(50, 285)
@@ -96,7 +105,7 @@ const buildPDF = async (dataCallback, endCallback, nome, categoria, localizacao,
 
     // Ocorrencia Image
     if (image !== undefined) {
-        doc.image(`service/images/ocorrencia.jpg`, 50, 425, {
+        doc.image(path.join(__dirname, `../service/images/ocorrencia.${format}`), 50, 425, {
             fit: [500, 300],
             align: 'center',
             valign: 'center'
@@ -105,9 +114,14 @@ const buildPDF = async (dataCallback, endCallback, nome, categoria, localizacao,
         doc
             .fontSize(12)
             .font('Helvetica-Bold')
-            .text('Não há imagem para esta ocorrência.', 50, 425, {
+            .text('Não há imagem para esta ocorrência.', {
                 align: 'center',
-            })
+            }, 425)
+    }
+
+    // delete image file
+    if (image !== undefined) {
+        fs.unlinkSync(path.join(__dirname, `../service/images/ocorrencia.${format}`))
     }
 
     doc.end();

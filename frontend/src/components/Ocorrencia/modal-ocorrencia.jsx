@@ -6,22 +6,21 @@ import { HiOutlineMail } from '@react-icons/all-files/hi/HiOutlineMail'
 import { useToast } from '@chakra-ui/react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import EditarOcorrencia from '../Ocorrencia/editar-ocorrencia';
+import EditarOcorrencia from './editar-ocorrencia';
 import axios from 'axios';
 
 function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
-    let ROUTE = process.env.REACT_APP_BACKEND_ROUTE;
 
-    const curEmail = localStorage.getItem('userEmail') === null ? localStorage.getItem('userGoogleEmail') : localStorage.getItem('userEmail');
-
+    const backendURL = process.env.REACT_APP_BACKEND_URL;
     const toast = useToast();
 
     /* Edit Modal */
-    const [modalShow, setModalShow] = useState(false);
+    const [editModalShow, setEditModalShow] = useState(false);
+    const handleCloseEdit = () => setEditModalShow(false);
 
     /* Delete modal */
     const [deleteModalShow, setDeleteModalShow] = useState(false);
-    const handleCloseDelete = () => setShow(false);
+    const handleCloseDelete = () => setDeleteModalShow(false);
 
     /* Modal */
     const [show, setShow] = useState(false);
@@ -30,7 +29,7 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
 
     const handleSendEmail = async () => {
 
-        axios.post(ROUTE + 'pdf', {
+        axios.post(`${backendURL}/pdf`, {
             nome: ocorrenciaDetails.nome,
             categoria: ocorrenciaDetails.categoria,
             data: ocorrenciaDetails.data,
@@ -39,41 +38,29 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
             descricao: ocorrenciaDetails.descricao,
             image: ocorrenciaDetails.image,
         })
-        try {
-            toast({
-                title: "Email enviado!",
-                description: "Email enviado com sucesso!",
-                status: "success",
-                duration: "2500",
-                isClosable: true,
-            })
-            const response = await axios.post(ROUTE + `send-email/${id}`, {
-                emailTo: curEmail,
-                title: ocorrenciaDetails.nome,
-            })
-            console.log("YEHRE: ", response);
-
-
-        } catch (error) {
-            console.log(error);
-        }
+        toast({
+            title: "Email enviado!",
+            description: "Email enviado com sucesso!",
+            status: "success",
+            duration: "3000",
+            isClosable: true,
+        })
+        await axios.post(`${backendURL}/send-email-by-id/${id}`, {
+            emailTo: process.env.EMAIL_HOST_USER,
+            title: ocorrenciaDetails.nome,
+        })
 
     }
 
     const handleDelete = async () => {
-        //use axios to delete the occurrence
-        try {
-            await axios.delete(ROUTE + `delete-ocorrencia/${id}`);
-            toast({
-                title: "Ocorrência deletada!",
-                description: "Ocorrência deletada com sucesso!",
-                status: "success",
-                duration: "2500",
-                isClosable: true,
-            })
-        } catch (error) {
-            console.log(error);
-        }
+        await axios.delete(`${backendURL}/delete-ocorrencia/${id}`);
+        toast({
+            title: "Ocorrência deletada!",
+            description: "Ocorrência deletada com sucesso!",
+            status: "success",
+            duration: "3000",
+            isClosable: true,
+        })
         setTimeout(() => {
             window.location.reload();
         }, 1250);
@@ -114,6 +101,8 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
     function ModalEdit(props) {
         return (
             <Modal
+                show={editModalShow}
+                onHide={() => setEditModalShow(false)}
                 {...props}
                 size="lg"
                 aria-labelledby="contained-modal-title-vcenter"
@@ -121,15 +110,16 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
             >
                 <Modal.Header closeButton>
                     <Modal.Title id="contained-modal-title-vcenter">
-                        Editar modal
+                        Editar Ocorrência
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <EditarOcorrencia id={id} handleClose={handleClose} ocorrenciaDetails={ocorrenciaDetails} />
+                    <EditarOcorrencia id={id} handleClose={handleCloseEdit} ocorrenciaDetails={ocorrenciaDetails} />
                 </Modal.Body>
             </Modal>
         );
     }
+
 
     return (
         <>
@@ -150,14 +140,7 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
                     <Modal.Title>{title}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>{text}</Modal.Body>
-                <Modal.Footer
-                    style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-
-                    }}
-                >
+                <Modal.Footer className='flex-row justify-content-between'>
                     {/* Delete Button */}
                     <motion.button
                         whileHover={{
@@ -228,7 +211,7 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
                         style={{
                             border: "none",
                         }}
-                        onClick={() => setModalShow(true)}
+                        onClick={() => setEditModalShow(true)}
                     >
                         <BsPencilSquare
                             style={{
@@ -239,10 +222,7 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
                     </motion.button>
 
                     {/* Edit Modal */}
-                    <ModalEdit
-                        show={modalShow}
-                        onHide={() => setModalShow(false)}
-                    />
+                    <ModalEdit />
 
                 </Modal.Footer>
             </Modal >

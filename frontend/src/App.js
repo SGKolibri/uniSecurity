@@ -1,45 +1,51 @@
 import React from 'react'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import './App.css'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 
 /* Pages and Components */
-import Login from './components/Login/login-component'
-import SignUp from './components/Register/signup-component'
+import LoginPage from './pages/Home/loginPage'
 import RegOcorrencia from './pages/Home/regOcorrenciaPage'
 import VerOcorrencia from './pages/Home/verOcorrenciaPage'
-import RecoverPassword from './pages/Home/recoverPasswordPage'
+import GuardaPage from './pages/Home/guardaPage'
 import { RequireAuth } from 'react-auth-kit'
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import NavbarHome from './components/Navbar/navbar-home'
+import { useAuthUser } from 'react-auth-kit';
 
 function App() {
 
-  const CLIENT_ID = '717615909929-gka7nu14rdaj7jaifrpj1fhmq3lin8d0.apps.googleusercontent.com'
-  // let googleLogged = localStorage.getItem('googleLoggedIn');
+  const authUser = useAuthUser()
+  let isRoot = authUser() && authUser().userDetail.role === "root" ? true : false
 
   return (
-    <GoogleOAuthProvider clientId={CLIENT_ID} redirect="/home/reg-ocorrencia">
-      <Routes>
-        <Route exact path="/*" element={<Login />} />
-        <Route className="App" path="/login" element={<Login />} />
-        <Route className="App" path="/register" element={<SignUp />} />
-        <Route className="App" path="/recover-password" element={<RecoverPassword />} />
-        <Route path="/home/reg-ocorrencia"
-          element={
-            <RequireAuth loginPath='/login'>
-              <RegOcorrencia />
-            </ RequireAuth>
-          } >
-        </Route>
-        <Route path="/home/ver-ocorrencia"
-          element={
-            <RequireAuth loginPath='/login'>
-              <VerOcorrencia />
-            </ RequireAuth>
-          } >
-        </Route>
-      </Routes >
-    </GoogleOAuthProvider>
+    <Routes>
+      <Route exact path="/*" element={<LoginPage />} />
+      <Route className="App" path="/login" element={<LoginPage />} />
+      <Route path="/home/reg-ocorrencia"
+        element={
+          <RequireAuth loginPath='/login'>
+            <NavbarHome />
+            <RegOcorrencia />
+          </ RequireAuth>
+        } >
+      </Route>
+      <Route path="/home/ver-ocorrencia"
+        element={
+          <RequireAuth loginPath='/login'>
+            <NavbarHome />
+            <VerOcorrencia />
+          </ RequireAuth>
+        } >
+      </Route>
+      <Route path="/home/guarda"
+        element={
+          <RequireAuth loginPath='/login'>
+            <NavbarHome />
+            {isRoot ? <GuardaPage /> : <Navigate to="/home/ver-ocorrencia" />}
+          </ RequireAuth>
+        } >
+      </Route>
+    </Routes >
   )
 }
 

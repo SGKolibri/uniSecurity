@@ -1,21 +1,59 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion, transform } from 'framer-motion'
 import axios from 'axios'
-import { useToast } from '@chakra-ui/toast'
-import Compressor from 'compressorjs'
+import {
+    useToast,
+    Select,
+    Input
+} from '@chakra-ui/react'
+import { categorias } from './categorias'
+import { AiOutlineEdit } from 'react-icons/ai'
+import { TbSelect } from "react-icons/tb";
+import { locais } from './locais'
+import useWindowDimensions from '../Utils/getWindowDimensions'
+import { Button } from '@chakra-ui/react'
 
 function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
-    let ROUTE = process.env.REACT_APP_BACKEND_ROUTE;
+
+    const backendURL = process.env.REACT_APP_BACKEND_URL;
 
     const toast = useToast();
 
+    const { width } = useWindowDimensions();
+
     const [nome, setNome] = useState('')
     const [categoria, setCategoria] = useState('')
-    const [hora, sethora] = useState('')
+    const [hora, setHorario] = useState('')
     const [data, setData] = useState('')
     const [localizacao, setLocalizacao] = useState('')
     const [descricao, setDescricao] = useState('')
     const [image, setImage] = useState('')
+    const [outraCategoria, setOutraCategoria] = useState(false)
+    const [outraLocalizacao, setOutraLocalizacao] = useState(false)
+
+    const acceptedFileTypes = 'image/x-png, image/png, image/jpg, image/jpeg, image/gif';
+    const acceptedFileTypesArray = acceptedFileTypes.split(",").map((item) => { return item.trim() });
+
+    const changeCategoria = () => {
+        setOutraCategoria(!outraCategoria)
+        setCategoria('')
+    }
+
+    const changeLocalizacao = () => {
+        setOutraLocalizacao(!outraLocalizacao)
+        setLocalizacao('')
+    }
+
+    useEffect(() => {
+        setNome(ocorrenciaDetails.nome)
+        setCategoria(ocorrenciaDetails.categoria)
+        setHorario(ocorrenciaDetails.hora)
+        setData(ocorrenciaDetails.data)
+        setLocalizacao(ocorrenciaDetails.localizacao)
+        setDescricao(ocorrenciaDetails.descricao)
+        setImage(ocorrenciaDetails.image)
+    }, [ocorrenciaDetails])
+
 
     const patchOcorrencia = () => {
 
@@ -30,7 +68,7 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
             return;
         }
 
-        axios.patch(ROUTE + `edit-ocorrencia/${id}`, {
+        axios.patch(`${backendURL}/edit-ocorrencia/${id}`, {
             nome: nome,
             hora: hora,
             data: data,
@@ -40,7 +78,6 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
             image: image
         })
             .then((response) => {
-                console.log(response);
                 toast({
                     title: "Ocorrência editada!",
                     description: "Ocorrência editada com sucesso!",
@@ -49,48 +86,16 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
                     isClosable: true,
                 });
             })
-            .catch((error) => {
-                console.log(error);
-            })
-
         setTimeout(() => {
             window.location.reload();
         }, 1250);
     }
-
-    /* Image Compressor */
-    const handleCompressedUpload = (imageToBeCompressed) => {
-        new Compressor(imageToBeCompressed, {
-            quality: 0.8, // 0.6 can also be used, but its not recommended to go below.
-            success: (result) => {
-                const formData = new FormData();
-
-                // The third parameter is required for server
-                formData.append('file', result, result.name);
-                console.log("Inside Compress: ", result);
-                encodeImageFileAsURL(result)
-            },
-        });
-    };
 
     /* convert image to base64 */
     function encodeImageFileAsURL(element) {
         let file = element;
         let reader = new FileReader();
         reader.addEventListener("load", function () {
-            console.log(reader.result)
-            if (reader.result.length > 1000000) {
-                console.log("Size: ", reader.result.length)
-                toast({
-                    title: "Imagem muito grande!",
-                    description: "Tamanho máximo de 1MB.",
-                    status: "error",
-                    duration: "2000",
-                    isClosable: true,
-                    position: "center"
-                })
-                return;
-            }
             setImage(reader.result);
         });
         reader.readAsDataURL(file);
@@ -98,185 +103,101 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
 
     return (
         <>
-            {/* Nome */}
-            <div style={{
-                float: "left",
-                width: "40%",
-                marginBottom: "1.5%",
-            }}>
-                <label>
-                    Título
-                    <label style={{ color: "red" }}> *</label>
-                </label>
-                <input
-                    style={{ height: "-100px" }}
-                    id='titulo'
-                    type="text"
-                    className="form-control"
-                    placeholder={ocorrenciaDetails[0]}
-                    onChange={(e) => setNome(e.target.value)}
-                    required
-                />
-            </div>
 
-            {/* Horário */}
-            <div style={{
-                float: "left",
-                width: "17.5%",
-                marginBottom: "1.5%",
-                marginLeft: "20%",
-                position: "relative",
-                display: "inline-block"
-            }}>
-                <label>
-                    Horário
-                    <label style={{ color: "red" }}> *</label>
-                </label>
-                <input
-                    id='hora'
-                    type="time"
-                    className="form-control"
-                    placeholder={ocorrenciaDetails[3]}
-                    onChange={(e) => sethora(e.target.value)}
-                    required
-                />
+            <div className='flex place-content-center justify-center w-full h-screen bg-slate-100'>
+                <div className="w-11/12 mt-16 sm:mt-[4.5%] rounded-xl shadow-lg bg-white">
+                    <h1 className="mt-4 sm:mb-8 md:text-gray-800 md:text-3xl sm:text-right text-center">
+                        Editar Ocorrência
+                    </h1>
 
-            </div>
+                    <div className="flex flex-col -mt-2 sm:mb-4 md:grid md:grid-cols-3">
+                        <div className="w-full -mt-2 px-4">
+                            <label className="text-lg font-semibold tracking-wider text-gray-900 mt-4 mb-2">
+                                Título
+                                <label className='text-red-500'>*</label>
+                            </label>
+                            <Input type="text" placeholder={ocorrenciaDetails.nome} onChange={(e) => setNome(e.target.value)} maxLength={40} required />
+                        </div>
+                        <div className="w-full -mt-4 px-4 ">
+                            <label className="text-lg font-semibold tracking-wider text-gray-900 mt-4 mb-2">
+                                Categoria
+                                <label className='text-red-500'>*</label>
+                            </label>
+                            {outraCategoria ?
+                                <Input type="text" placeholder={ocorrenciaDetails.categoria} aria-label="Nome da categoria" maxLength={40} onChange={(e) => setCategoria(e.target.value)} />
+                                :
+                                <Select type="text" placeholder={ocorrenciaDetails.categoria} aria-label="Selecionar categoria" onChange={(e) => setCategoria(e.target.value)} >
+                                    {categorias.map((categoria) => { return (<option value={categoria}>{categoria}</option>) })}
+                                </Select>
+                            }
+                        </div>
 
-            {/* Data */}
-            <div style={{
-                float: "right",
-                width: "17.5%",
-                marginBottom: "1.5%"
-            }}>
-                <label>
-                    Data
-                    <label style={{ color: "red" }}> *</label>
-                </label>
-                <input
-                    id='data'
-                    type="date"
-                    className="form-control"
-                    placeholder={ocorrenciaDetails[2]}
-                    onChange={(e) => setData(e.target.value)}
-                    required
-                />
-            </div>
+                        <div className="w-full -mt-4 px-4  ">
+                            <label className="text-lg font-semibold tracking-wider text-gray-900 mt-4 mb-2">
+                                Localização
+                                <label className='text-red-500'>*</label>
+                            </label>
+                            {/* <motion.button className=' ml-[64%]' whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} title={outraLocalizacao ? "Locais existentes" : "Outro local"} onClick={() => changeLocalizacao(!outraLocalizacao)}>
+                                <AiOutlineEdit style={{ width: '30px', height: '30px' }} />
+                            </motion.button> */}
+                            {outraLocalizacao ?
+                                <Input type="text" placeholder={ocorrenciaDetails.localizacao} aria-label="Nome do local" maxLength={40} onChange={(e) => setLocalizacao(e.target.value)} />
+                                :
+                                <Select type="text" placeholder={ocorrenciaDetails.localizacao} onChange={(e) => setLocalizacao(e.target.value)} >
+                                    {locais.map((local) => { return <option value={local}>{local}</option> })}
+                                </Select>
+                            }
+                        </div>
+                    </div>
 
-            {/* Categoria */}
-            <div style={{
-                float: "left",
-                width: "40%",
-                marginBottom: "1.5%",
-            }}>
-                <label>
-                    Categoria
-                    <label style={{ color: "red" }}> *</label>
-                </label>
-                <input
-                    id='categoria'
-                    type="text"
-                    className="form-control"
-                    placeholder={ocorrenciaDetails[1]}
-                    onChange={(e) => setCategoria(e.target.value)}
-                    required
-                />
+                    <div className="w-full sm:mb-4 px-4">
+                        <label className="text-lg font-semibold tracking-wider text-gray-900 mt-2 mb-2">
+                            Descrição
+                            <label className='text-red-500'>*</label>
+                        </label>
+                        <textarea style={{ height: transform(0.5, [0, 1], ["-100px", "450px"]), }} id='descricao' type="text" cols="40" rows="5" className="form-control" placeholder={ocorrenciaDetails.descricao} maxLength={500} onChange={(e) => setDescricao(e.target.value)} required />
+                    </div>
 
-            </div>
+                    <div className="flex">
+                        <div className=' sm:w-[22%] px-4 '>
+                            <label className="text-lg font-semibold tracking-wider text-gray-900 mt-2 mb-2">
+                                Data
+                                <label className='text-red-500'>*</label>
+                            </label>
+                            <input id='data' type="date" className="form-control" placeholder={ocorrenciaDetails.data} onChange={(e) => setData(e.target.value)} required />
+                        </div>
+                        <div className=' sm:w-[22%]  px-4 '>
+                            <label className="text-lg font-semibold tracking-wider text-gray-900 mt-2 mb-2">
+                                Horário
+                                <label className='text-red-500'>*</label>
+                            </label>
+                            <input id='horario' type="time" className="form-control" placeholder={ocorrenciaDetails.hora} onChange={(e) => setHorario(e.target.value)} required />
+                        </div>
+                        <div className="px-4 mr-auto">
+                            <label className="text-lg font-semibold tracking-wider text-gray-900 mt-2 mb-2">
+                                Anexar imagem (opcional)
+                            </label>
+                            <input type="file" accept={acceptedFileTypesArray} multiple={false} id='image' className="form-control" placeholder={ocorrenciaDetails.image} onChange={e => (encodeImageFileAsURL(e.target.files[0]))} />
+                        </div>
+                    </div>
 
-            {/* Localização */}
-            <div style={{
-                float: "right",
-                width: "40%",
-                marginBottom: "1.5%",
-            }}>
-                <label>
-                    Localização
-                    <label style={{ color: "red" }}> *</label>
-                </label>
-                <input
-                    type="text"
-                    id='localizacao'
-                    className="form-control"
-                    placeholder={ocorrenciaDetails[4]}
-                    onChange={(e) => setLocalizacao(e.target.value)}
-                    required
-                />
-            </div>
+                    <footer className="flex flex-row justify-end mt-4 mb-4 mr-4">
+                        <Button
+                            className="mr-4"
+                            onClick={() => handleClose()}
+                        >
+                            Cancelar
+                        </Button>
+                        <Button
+                            colorScheme="blue"
+                            onClick={() => patchOcorrencia()}
+                        >
+                            Editar Ocorrência
+                        </Button>
+                    </footer>
 
-            {/* Descrição */}
-            <div style={{
-                float: "left",
-                marginBottom: "5%",
-                width: "100%"
-            }}>
-                <label>
-                    Descrição
-                    <label style={{ color: "red" }}> *</label>
-                </label>
-                <textarea
-                    style={{
-                        height: transform(0.5, [0, 1], ["-100px", "550px"]),
-                    }}
-                    id='descricao'
-                    type="text"
-                    cols="40"
-                    rows="5"
-                    maxLength={500}
-                    className="form-control"
-                    placeholder={ocorrenciaDetails[5]}
-                    onChange={(e) => setDescricao(e.target.value)}
-                    required
-                />
-            </div>
-
-            {/* Botão Anexar Imagem */}
-            <div style={{
-                float: "left",
-                width: "25%",
-                marginTop: "-4%",
-                marginRight: "2%"
-            }}>
-                Imagem
-                <input
-                    type="file"
-                    className="form-control"
-                    placeholder="imagem"
-                    onChange={e => (handleCompressedUpload(e.target.files[0]))}
-                />
-            </div>
-            <footer>
-                {/* Botão Cancelar */}
-                <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.9 }}
-                    style={{
-                        float: "left",
-                        boxShadow: "2px 2px 5px 0 rgba(0,0,0,0.3)"
-                    }}
-                    type="submit"
-                    className="btn btn-primary"
-                    background-color="#00abff"
-                    onClick={() => handleClose()}
-                >
-                    Cancelar
-                </motion.button>
-                <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.9 }}
-                    style={{
-                        float: "right",
-                        boxShadow: "2px 2px 5px 0 rgba(0,0,0,0.3)"
-                    }}
-                    type="submit"
-                    className="btn btn-primary"
-                    background-color="#00abff"
-                    onClick={() => patchOcorrencia()}
-                >
-                    Editar Ocorrência
-                </motion.button>
-            </footer>
-
+                </div>
+            </div >
         </>
     )
 }

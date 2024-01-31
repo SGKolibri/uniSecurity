@@ -3,27 +3,18 @@ import Navbar from '../Navbar/navbar';
 import axios from 'axios';
 import { useSignIn } from 'react-auth-kit';
 import { useToast } from '@chakra-ui/react'
-import { motion } from 'framer-motion';
-import { GoogleLogin } from '@react-oauth/google';
-import jwt_decode from "jwt-decode";
-import useWindowDimensions from '../Utils/getWindowDimensions';
-import { Link } from 'react-router-dom';
-import bgJPG from '../../images/bg.jpg';
+import { MdOutlineEmail } from "react-icons/md";
+import { IoKeyOutline } from "react-icons/io5";
+// import UserContext from '../Context/user-context'
 
 export default function Login() {
 
-  let ROUTE = process.env.REACT_APP_BACKEND_ROUTE;
-
-  const { width } = useWindowDimensions()
-
+  const backendURL = process.env.REACT_APP_BACKEND_URL;
   const toast = useToast();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [user, setUser] = useState(null);
-
-  const [credentialResponse, setCredentialResponse] = useState(null);
 
   const signIn = useSignIn();
 
@@ -42,14 +33,10 @@ export default function Login() {
     }
 
     try {
-      const response = await axios.post(ROUTE + "login-user", {
+      const response = await axios.post(`${backendURL}/login-user`, {
         email: email,
         password: password
-      })
-
-      console.log("Response: ", response.data.error)
-
-      console.log("Token: ", response.data.token)
+      });
 
       if (response.data.error !== undefined) {
         toast({
@@ -62,21 +49,23 @@ export default function Login() {
         return;
       }
 
-      const responseUser = await axios.get(ROUTE + `get-user/${email}`);
-
-      localStorage.setItem('userName', responseUser.data.name);
-      localStorage.setItem('userSurname', responseUser.data.surname);
-      localStorage.setItem('userImage', responseUser.data.image);
-
       setUser(response.data);
-      localStorage.setItem('userEmail', email);
+
+      const userDetails = {
+        name: response.data.name,
+        surname: response.data.surname,
+        email: response.data.email,
+        role: response.data.role,
+      }
+
 
       if (response.data.token !== undefined) {
         signIn({
+          user: response.data,
           token: response.data.token,
           expiresIn: 3600, // token expira em 1 hora
           tokenType: 'Bearer',
-          authState: { email: email }
+          authState: { userDetail: userDetails }
         });
         window.location.href = "/home/reg-ocorrencia";
       }
@@ -89,241 +78,98 @@ export default function Login() {
         duration: 2500,
         isClosable: true,
       })
-      if (!error?.response) {
-        setError("Erro ao conectar com o servidor");
-      } else if (!user) {
-        setError("Erro ao realizar login.");
-      }
     }
   };
+
+
 
   return (
     <>
       <Navbar opacity1={1} opacity2={0.75} />
 
-      {width > 992 ? (
-        // Desktop Login
-        <div className="auth-wrapper"
-          style={{
-            zIndex: -1,
-            backgroundImage: `url(${bgJPG})`,
-          }}
-        >
-          <div className="auth-inner"
-            style={{
-              position: "absolute",
-              alignSelf: "center",
-            }}
-          >
-            <form
-              onSubmit={handleLogin}
-            >
-              <h3>Login</h3>
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-100 ">
+        <div className="flex flex-col items-center justify-center w-11/12  max-w-md px-4 py-8 bg-white shadow-lg rounded-2xl">
+          <div className="flex flex-col w-full mb-8">
+            <div className="flex flex-col mb-4">
 
-              <div className="mb-3">
-                <label>Email</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  placeholder="digite seu email"
-                  // required
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label>Senha</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  placeholder="digite sua senha"
-                  // required
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-
-              <div className="d-grid">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  style={{
-                    boxShadow: "0px 0px 12px 0px rgba(0,0,0,0.2)",
-                  }}
-                  type="submit"
-                  className="btn btn-primary"
-                  background-color="#0850BC"
-                >
+              {/* Title */}
+              <div className="flex items-center justify-center w-full">
+                <h1 className="text-3xl font-medium text-gray-900">
                   Login
-                </motion.button>
-
-                <hr />
-
-                <div id="google-login"
-                  style={{
-                    width: "100%",
-                    justifyContent: "center",
-                    display: "flex",
-                  }}
-                >
-                  <GoogleLogin
-                    onSuccess={credentialResponse => {
-                      let decoded = jwt_decode(credentialResponse.credential);
-                      setCredentialResponse(decoded);
-                      localStorage.setItem('userGoogleName', decoded.name);
-                      localStorage.setItem('userGoogleImage', decoded.picture);
-                      localStorage.setItem('userGoogleEmail', decoded.email);
-                      signIn({
-                        token: credentialResponse.credential,
-                        expiresIn: 3600, // token expira em 1 hora
-                        tokenType: 'Bearer',
-                        authState: { email: email }
-                      });
-                      window.location.href = "/home/reg-ocorrencia";
-                    }}
-                    onError={() => {
-                      console.log('Login Failed');
-                    }}
-                  />
-                </div>
-
+                </h1>
               </div>
-            </form>
-            <p className="forgot-password text-right">
-              Não possui login <a href="/register">registrar?</a>
-            </p>
-          </div >
-        </div >
-      ) : (
-
-        // Mobile Login
-        <div className="auth-wrapper">
-          <div className="auth-inner"
-            style={{
-              position: "relative",
-              alignSelf: "center",
-              width: "95%",
-              padding: "10%",
-              marginTop: "20%",
-              top: "0",
-              boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.2)"
-            }}
-          >
-            <div
-              style={{
-                textAlign: "center",
-                alignItems: "center",
-              }}
-            >
-              <h style={{ fontSize: 28 }} >
-                Login
-              </h>
             </div>
-            <hr
-              style={{
-                marginTop: "25px",
-                marginBottom: "50px",
-              }}
-            />
-            <form
-              onSubmit={handleLogin}
-            >
-              <div
-                style={{
-                  marginBottom: "40px"
-                }}
-              >
-                <label>Email</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  placeholder="digite seu email"
-                  // required
-                  onChange={(e) => setEmail(e.target.value)}
-                />
+
+            {/* Subtitle */}
+            <div className="flex w-full">
+              <div className="flex items-center justify-center w-full">
+                <span className="text-sm text-gray-500 text-center">
+                  Não possui cadastro?
+                </span>
               </div>
+            </div>
+          </div>
+          <div className="flex w-full pb-4 -mt-6">
+            <div className="flex items-center justify-center w-full">
+              <span className="text-sm text-gray-500 text-center">
+                Entre em contato com o administrador do sistema.
+              </span>
+            </div>
+          </div>
 
-              <div
-                style={{
-                  marginBottom: "50px"
-                }}
-              >
-                <label>Senha</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  placeholder="digite sua senha"
-                  // required
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-
-              <div className="d-grid">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  style={{
-                    boxShadow: "0px 0px 12px 0px rgba(0,0,0,0.2)",
-                  }}
-                  type="submit"
-                  className="btn btn-primary"
-                  background-color="#0850BC"
-                >
-                  Login
-                </motion.button>
-
-                <hr
-                  style={{
-                    marginBottom: "30px",
-                  }}
-                />
-
-                <div id="google-login"
-                  style={{
-                    width: "100%",
-                    justifyContent: "center",
-                    display: "flex",
-                  }}
-                >
-                  <GoogleLogin
-                    onSuccess={credentialResponse => {
-                      let decoded = jwt_decode(credentialResponse.credential);
-                      setCredentialResponse(decoded);
-                      localStorage.setItem('userGoogleName', decoded.name);
-                      localStorage.setItem('userGoogleImage', decoded.picture);
-                      localStorage.setItem('userGoogleEmail', decoded.email);
-                      signIn({
-                        token: credentialResponse.credential,
-                        expiresIn: 3600, // token expira em 1 hora
-                        tokenType: 'Bearer',
-                        authState: { email: email }
-                      });
-                      window.location.href = "/home/reg-ocorrencia";
-                    }}
-                    onError={() => {
-                      console.log('Login Failed');
-                    }}
+          {/* Email */}
+          <div className="flex flex-col w-full">
+            <form onSubmit={handleLogin}>
+              <div className="flex flex-col mb-4">
+                <div className="flex relative ">
+                  <span className="rounded-l-md inline-flex items-center px-3 border-t bg-white border-l border-b border-gray-300 text-gray-500 shadow-sm text-sm">
+                    <MdOutlineEmail />
+                  </span>
+                  <input
+                    type="email"
+                    className="rounded-r-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="Email"
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
+              </div>
 
-                <div
-                  style={{
-                    marginTop: "30px",
-                    alignText: "center",
-                    justifyContent: "center",
-                    display: "flex",
-                  }}
-                >
-                  <p className="forgot-password text-right">
-                    Não possui um login? <Link to="/register">Registre aqui.</Link>
-                  </p>
+              {/* Password */}
+              <div className="flex flex-col mb-6">
+                <div className="flex relative ">
+                  <span className="rounded-l-md inline-flex items-center px-3 border-t bg-white border-l border-b border-gray-300 text-gray-500 shadow-sm text-sm">
+                    <IoKeyOutline />
+                  </span>
+                  <input
+                    type="password"
+                    className="rounded-r-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="Senha"
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
                 </div>
+              </div>
 
+              {/* Login Button */}
+              <div className="flex w-full">
+                <button
+                  type="submit"
+                  className="py-2 px-4 bg-blue-600 hover:bg-blue-800 focus:ring-blue-600 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg"
+                >
+                  Login
+                </button>
               </div>
             </form>
+          </div>
 
-          </div >
-        </div >
-      )}
+          {/* Footer */}
+          <div className="flex flex-col items-center justify-center w-full py-4">
+            <span className="text-sm text-gray-500">
+              © 2021 - Todos os direitos reservados à FTT
+            </span>
+          </div>
+
+        </div>
+      </div>
 
     </>
   )

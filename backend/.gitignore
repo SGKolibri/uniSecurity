@@ -8,6 +8,9 @@
 # testing
 /coverage
 
+# pdf
+/*.pdf
+
 # production
 /build
 
