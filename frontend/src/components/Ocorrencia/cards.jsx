@@ -5,7 +5,7 @@ import base64 from "react-native-base64";
 import Image from 'react-bootstrap/Image';
 import { Input, Spinner } from '@chakra-ui/react'
 import useWindowDimensions from '../Utils/getWindowDimensions'
-import Modal from './modal-ocorrencia'
+import ModalOcorrencia from './modal-ocorrencia'
 import { useContext } from 'react';
 import { FilterContext } from '../Context/filter-context';
 import axios from 'axios';
@@ -26,6 +26,10 @@ function Cards({ search, curPage, setCurPage, cardsPerPage }) {
     const mobile = width < 992;
 
     useEffect(() => {
+        getOcorrencias()
+    }, [filterContext.categoria, filterContext.local, filterContext.registeredBy, filterContext.data, filterContext.hasFilters, curPage, search, backendURL, filterContext.numberOfOcorrencias, setCurPage, cardsPerPage]);
+
+    const getOcorrencias = async () => {
         let currentPage = search === "" ? curPage : 1;
         setCurPage(currentPage);
 
@@ -43,7 +47,7 @@ function Cards({ search, curPage, setCurPage, cardsPerPage }) {
             .then(() => {
                 setLoading(false);
             })
-    }, [filterContext.categoria, filterContext.local, filterContext.registeredBy, filterContext.data, filterContext.hasFilters, curPage, search, backendURL, filterContext.numberOfOcorrencias, setCurPage, cardsPerPage]);
+    }
 
     function ConvertToImageFormat(base64ImageFormat, appTitle) {
         if (!base64ImageFormat) return (<h>Nenhuma imagem anexada.</h>);
@@ -69,7 +73,7 @@ function Cards({ search, curPage, setCurPage, cardsPerPage }) {
         let i = 0;
         let curCards = [];
 
-        if (ocorrencias === undefined || ocorrencias.length === 0) {
+        if (!ocorrencias || ocorrencias.length === 0) {
             return (
                 <div style={{ textAlign: "center", margin: "5%" }}>
                     <h>Nenhuma ocorrência registrada.</h>
@@ -77,145 +81,58 @@ function Cards({ search, curPage, setCurPage, cardsPerPage }) {
             )
         }
 
-        if (width > 992) {
-            for (i = 0; i < ocorrencias.length; i++) {
-                cardsToFilter.push(
-                    <>
-                        <Card.Title
-                            style={{
-                                display: "flex",
-                                borderTopLeftRadius: "100px",
-                            }}
-                        >
-                            {ocorrencias[i].nome}
+        const createCard = (ocorrencia) => (
+            <>
+                <Card.Title>
+                    {width > 992 ? ocorrencia.nome : sliceNameAtBlankSpace(ocorrencia.nome)}
+                </Card.Title>
+                <Card.Subtitle className="mb-2 text-muted">
+                    {ocorrencia.categoria}
+                    <br />
+                </Card.Subtitle>
+                <hr />
+                <Card.Text>
+                    <div style={{ height: "75px" }}>
+                        <h>{ocorrencia.data} - {ocorrencia.hora}</h><br />
+                        <h>{ocorrencia.localizacao}</h>
+                    </div>
+                    <ModalOcorrencia centered id={ocorrencia._id} title={ocorrencia.nome} text={createModalText(ocorrencia)}
+                        ocorrenciaDetails={createOcorrenciaDetails(ocorrencia)}
+                        refreshCards={getOcorrencias}
+                    />
+                </Card.Text>
+            </>
+        );
 
-                        </Card.Title >
-                        <Card.Subtitle className="mb-2 text-muted">
-                            Categoria: {ocorrencias[i].categoria}
-                            <br />
-                            Registrador por: {ocorrencias[i].registeredBy}
-                        </Card.Subtitle>
-                        <Card.Text
-                            style={{ textOverflow: "ellipsis" }}
-                        >
+        const createModalText = (ocorrencia) => (
+            <>
+                <h>Categoria: {ocorrencia.categoria}</h> <br />
+                <h>Data e Hora: {ocorrencia.data} - {ocorrencia.hora}</h><br />
+                <h>Local: {ocorrencia.localizacao}</h><br />
+                <h>Registrado por: {ocorrencia.registeredBy}</h> <br />
+                <div style={{ marginTop: "2%", marginBottom: "3%" }}>
+                    <h >{ocorrencia.descricao}</h><br />
+                </div>
+                {ConvertToImageFormat(ocorrencia.image, ocorrencia.data)}
+            </>
+        );
 
-                            {ocorrencias && (
-                                <div style={{ height: "75px" }}>
-                                    <h>Data e Hora: {ocorrencias[i].data} - {ocorrencias[i].hora}</h><br />
-                                    <h>Local: {ocorrencias[i].localizacao}</h>
-                                </div>
-                            )}
-                            <div style={{ right: '25%' }}>
-                                <Modal centered id={ocorrencias[i]._id} title={ocorrencias[i].nome} text={
-                                    <>
-                                        {width > 992 ? (<></>) : (<></>)}
-                                        <h>Categoria: {ocorrencias[i].categoria}</h> <br />
-                                        <h>Data e Hora: {ocorrencias[i].data} - {ocorrencias[i].hora}</h><br />
-                                        <h>Local: {ocorrencias[i].localizacao}</h><br />
-                                        <h>Registrado por: {ocorrencias[i].registeredBy}</h> <br />
-                                        <div style={{ marginTop: "2%", marginBottom: "3%" }}>
-                                            <h >{ocorrencias[i].descricao}</h><br />
-                                        </div>
-                                        {ConvertToImageFormat(ocorrencias[i].image, ocorrencias[i].data)}
-                                    </>
-                                }
-                                    ocorrenciaDetails={
-                                        {
-                                            nome: ocorrencias[i].nome,
-                                            categoria: ocorrencias[i].categoria,
-                                            data: ocorrencias[i].data,
-                                            hora: ocorrencias[i].hora,
-                                            localizacao: ocorrencias[i].localizacao,
-                                            descricao: ocorrencias[i].descricao,
-                                            image: ocorrencias[i].image,
-                                            registeredBy: ocorrencias[i].registeredBy
-                                        }
-                                    }
-                                />
-                            </div>
-                        </Card.Text>
-                    </>
-                )
-            }
+        const createOcorrenciaDetails = (ocorrencia) => ({
+            nome: ocorrencia.nome,
+            categoria: ocorrencia.categoria,
+            data: ocorrencia.data,
+            hora: ocorrencia.hora,
+            localizacao: ocorrencia.localizacao,
+            descricao: ocorrencia.descricao,
+            image: ocorrencia.image,
+            registeredBy: ocorrencia.registeredBy
+        });
 
-            let filteredOcorrencias = cardsToFilter;
-
-            if (filteredOcorrencias === undefined || filteredOcorrencias.length === 0) {
-                return (
-                    <div style={{ textAlign: "center", margin: "5%" }}>
-                        <h>Nenhuma ocorrência encontrada. Filtros aplicados:</h> < br />
-                        {/* {filterContext.categoria === "" ? (<></>) : (<><h>Categoria: {filterContext.categoria}</h> < br /></>)}
-                        {filterContext.local === "" ? (<></>) : (<><h>Local: {filterContext.local}</h> <br /> </>)}
-                        {filterContext.registeredBy === "" ? (<></>) : (<h>Registrador: {filterContext.registeredBy}</h>)} */}
-                    </div >
-                )
-            }
-            curCards = filteredOcorrencias;
-
-        } else {
-            for (i = 0; i < ocorrencias.length; i++) {
-
-                cardsToFilter.push(
-                    <>
-                        <Card.Title>
-                            {sliceNameAtBlankSpace(ocorrencias[i].nome)}
-                        </Card.Title >
-
-                        {width > 992 ? (<Card.Subtitle className="mb-2 text-muted">Categoria: {ocorrencias[i].categoria}</Card.Subtitle>)
-                            :
-                            (<Card.Subtitle className="mb-2 text-muted">{ocorrencias[i].categoria}</Card.Subtitle>)}
-
-                        <hr />
-
-                        <Card.Text>
-                            {ocorrencias && (
-                                <div style={{ height: "75px" }}>
-                                    {width > 992 ? (<><h>Data e Hora: {ocorrencias[i].data} - {ocorrencias[i].hora}</h><br /></>) : (<></>)}
-                                    {width > 992 ? (<><h>Local: {ocorrencias[i].localizacao}</h><br /></>) : (<></>)}
-                                </div>
-                            )}
-                            <div>
-                                <Modal centered id={ocorrencias[i]._id} title={ocorrencias[i].nome} text={
-                                    <>
-                                        {width > 992 ? (<></>) : (<></>)}
-                                        <h>Categoria: {ocorrencias[i].categoria}</h> <br />
-                                        <h>Data e Hora: {ocorrencias[i].data} - {ocorrencias[i].hora}</h><br />
-                                        <h>Local: {ocorrencias[i].localizacao}</h><br />
-                                        <h>Registrado por: {ocorrencias[i].registeredBy}</h> <br />
-                                        <div style={{ marginTop: "2%", marginBottom: "3%" }}>
-                                            <h >{ocorrencias[i].descricao}</h><br />
-                                        </div>
-                                        {ConvertToImageFormat(ocorrencias[i].image, ocorrencias[i].data)}
-                                    </>
-                                }
-                                    ocorrenciaDetails={
-                                        {
-                                            nome: ocorrencias[i].nome, categoria: ocorrencias[i].categoria, data: ocorrencias[i].data,
-                                            hora: ocorrencias[i].hora, localizacao: ocorrencias[i].localizacao, descricao: ocorrencias[i].descricao,
-                                            image: ocorrencias[i].image, registeredBy: ocorrencias[i].registeredBy
-                                        }
-                                    }
-                                />
-                            </div>
-                        </Card.Text>
-                    </>
-                )
-            }
-
-            let filteredOcorrencias = cardsToFilter;
-            if (filteredOcorrencias === undefined || filteredOcorrencias.length === 0) {
-                return (
-                    <div style={{ textAlign: "center", margin: "5%" }}>
-                        <h>Nenhuma ocorrência com o(s) seguinte(s) filtro(s):</h>
-                        <br />
-                        {filterContext.categoria === "" ? (<></>) : (<><h>Categoria: {filterContext.categoria}</h> < br /></>)}
-                        {filterContext.local === "" ? (<></>) : (<><h>Local: {filterContext.local}</h> <br /> </>)}
-                        {filterContext.registrador === "" ? (<></>) : (<h>Registrador: {filterContext.registeredBy}</h>)}
-                    </div >
-                )
-            }
-            curCards = filteredOcorrencias;
+        for (i = 0; i < ocorrencias.length; i++) {
+            cardsToFilter.push(createCard(ocorrencias[i]));
         }
+
+        curCards = cardsToFilter;
 
         const CardComponent = ({ ocorrencia }) => (
             <motion.div
@@ -230,6 +147,7 @@ function Cards({ search, curPage, setCurPage, cardsPerPage }) {
                 </Card>
             </motion.div>
         );
+
         const cards = search === "" ? curCards : cardsToFilter.filter((ocorrencia) => {
             return ocorrencia.props.children[0].props.children.toLowerCase().includes(search.toLowerCase())
         });

@@ -66,7 +66,6 @@ module.exports = {
         if (localizacao !== undefined) {
             query.localizacao = { $regex: new RegExp(localizacao, 'i') };
         }
-        console.log(query);
         try {
             const ocorrencia = await Ocorrencia.find(query).limit(limit).skip(limit * page).sort({ data: sortOrder });
             const allOcorrencia = await Ocorrencia.find({});

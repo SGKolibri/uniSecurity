@@ -38,9 +38,6 @@ function SignUp() {
     const handleShow = () => setShow(true);
 
     const handleSubmit = async e => {
-
-        console.log("1")
-
         if (!name || !surname || !email || !password) {
             toast({
                 title: "Preencha todos os campos!",
@@ -65,8 +62,6 @@ function SignUp() {
             return;
         }
 
-        console.log("2")
-
         try {
             await axios.post(`${backendURL}/register-user`, {
                 name: name,
@@ -75,8 +70,6 @@ function SignUp() {
                 password: password,
                 image: image
             });
-
-            console.log("3")
 
             toast({
                 title: "Usuário registrado com sucesso!",

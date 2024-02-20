@@ -5,11 +5,11 @@ import { BsPencilSquare } from '@react-icons/all-files/bs/BsPencilSquare';
 import { HiOutlineMail } from '@react-icons/all-files/hi/HiOutlineMail'
 import { useToast } from '@chakra-ui/react';
 import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
 import EditarOcorrencia from './editar-ocorrencia';
+import Swal from 'sweetalert2'
 import axios from 'axios';
 
-function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
+function ModalOcorrencia({ title, text, id, ocorrenciaDetails, refreshCards }) {
 
     const backendURL = process.env.REACT_APP_BACKEND_URL;
     const toast = useToast();
@@ -28,7 +28,6 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
     const handleShow = () => setShow(true);
 
     const handleSendEmail = async () => {
-
         axios.post(`${backendURL}/pdf`, {
             nome: ocorrenciaDetails.nome,
             categoria: ocorrenciaDetails.categoria,
@@ -54,48 +53,30 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
 
     const handleDelete = async () => {
         await axios.delete(`${backendURL}/delete-ocorrencia/${id}`);
-        toast({
-            title: "Ocorrência deletada!",
-            description: "Ocorrência deletada com sucesso!",
-            status: "success",
-            duration: "3000",
-            isClosable: true,
+        Swal.fire({
+            title: 'Ocorrência deletada!',
+            icon: 'success',
+            confirmButtonText: 'Fechar',
+            confirmButtonColor: '#3085d6',
         })
-        setTimeout(() => {
-            window.location.reload();
-        }, 1250);
+        refreshCards()
     }
 
     function ConfirmDeleteModal() {
-        return (
-            <>
-                <Modal centered show={deleteModalShow} onHide={() => setDeleteModalShow(false)} >
-                    <Modal.Header closeButton>
-                        <Modal.Title>Deletar Ocorrência</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body
-                        style={{
-                            display: "flex",
-                            height: "120px"
-                        }}
-                    >
-                        Ao deletar a ocorrência ela não poderá mais ser acessada.
-                    </Modal.Body>
-                    <Modal.Footer
-                        stle={{
-                            justifyContent: "space-between"
-                        }}
-                    >
-                        <Button variant="secondary" onClick={handleCloseDelete}>
-                            Cancelar
-                        </Button>
-                        <Button variant="danger" onClick={handleDelete}>
-                            Deletar
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-            </>
-        );
+        Swal.fire({
+            title: 'Tem certeza que deseja deletar?',
+            text: "Você não poderá reverter isso!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, deletar!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                handleDelete()
+            }
+        })
     }
 
     function ModalEdit(props) {
@@ -156,7 +137,7 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
                             border: "none",
                             float: "left",
                         }}
-                        onClick={() => setDeleteModalShow(true)}
+                        onClick={() => ConfirmDeleteModal()}
                     >
                         <BsTrash
                             style={{
@@ -165,9 +146,6 @@ function ModalOcorrencia({ title, text, id, ocorrenciaDetails }) {
                             }}
                         />
                     </motion.button>
-
-                    {/* Confirm Delete Modal */}
-                    <ConfirmDeleteModal />
 
                     {/* Send Email Button */}
                     <motion.button

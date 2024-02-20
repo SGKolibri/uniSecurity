@@ -134,18 +134,18 @@ function NavbarHome() {
                                             </div>
                                         </div>
                                     </ul>
-                                    <ul className="navbar-nav ml-auto mt-10 text-2xl h-screen">
-                                        <NavLink to='/home/reg-ocorrencia' className="items-center" onClick={onClose}>
-                                            <AiTwotoneEdit className="w-8 h-8" />
+                                    <ul className="h-[88%] navbar-nav mt-10 text-2xl gap-6">
+                                        <a href='/home/reg-ocorrencia' className="flex" onClick={onClose} style={{ opacity: location.pathname === '/home/reg-ocorrencia' ? 1 : 0.5 }}>
+                                            <AiTwotoneEdit className="mr-2 w-8 h-8" />
                                             Registrar Ocorrência
-                                        </NavLink>
-                                        <NavLink to='/home/ver-ocorrencia' className="flex items-center" onClick={onClose}>
-                                            <AiOutlineEye className="w-8 h-8" />
+                                        </a>
+                                        <a href='/home/ver-ocorrencia' className="flex" onClick={onClose} style={{ opacity: location.pathname === '/home/ver-ocorrencia' ? 1 : 0.5 }}>
+                                            <AiOutlineEye className="mr-2 w-8 h-8" />
                                             Ver Ocorrência
-                                        </NavLink>
-                                        <li className="flex nav-item">
-                                            <div className="text-white flex items-center" onClick={logOut} >
-                                                <ImExit className="w-8 h-8" onClick={logOut} />
+                                        </a>
+                                        <li className="flex mt-auto nav-item">
+                                            <div className="text-white flex" onClick={logOut} >
+                                                <ImExit className="mr-2 w-8 h-8" onClick={logOut} />
                                                 Sair
                                             </div>
                                         </li>

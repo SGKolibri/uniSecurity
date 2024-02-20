@@ -61,8 +61,6 @@ module.exports = {
     async getUserByEmail(req, res) {
         const email = req.params.email;
 
-        console.log(email)
-
         try {
             const user = await User.findOne({ email: email });
             if (user) {
@@ -77,9 +75,6 @@ module.exports = {
         const limit = Number(req.query.limit) || 7;
         const search = req.query.search || undefined; // Filtro por nome
         const role = "user"; // Buscar apenas usuários (guardas)
-
-        console.log("page: " + page);
-        console.log("limit: " + limit);
 
         if (page < 0) page = 0;
 
@@ -139,9 +134,10 @@ module.exports = {
 
         try {
             const userImage = await User.find({ email });
-            res.send({ status: "ok", userImage: userImage[0].image
-        
-        });
+            res.send({
+                status: "ok", userImage: userImage[0].image
+
+            });
         } catch (error) {
             res.send({ status: "error", error: "Houve um problema ao buscar imagem do usuário." });
         }
