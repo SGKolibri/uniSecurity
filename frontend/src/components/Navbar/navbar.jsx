@@ -5,9 +5,7 @@ import { BiShieldQuarter } from '@react-icons/all-files/bi/BiShieldQuarter';
 function Navbar() {
     return (
         <>
-            <nav className="navbar navbar-expand-lg navbar-light fixed-top"
-                style={{ backgroundColor: '#0850BC' }}
-            >
+            <nav className="navbar navbar-expand-lg navbar-light fixed-top bg-blue-950">
                 <div
                     style={{
                         width: "100%",

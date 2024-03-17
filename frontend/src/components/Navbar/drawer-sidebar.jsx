@@ -13,17 +13,12 @@ export default function DrawerSidebar({ children, isOpen, onClose, btnRef }) {
         <>
             <Drawer
                 isOpen={isOpen}
-                placement='right'
+                placement='left'
                 onClose={onClose}
                 finalFocusRef={btnRef}
             >
                 <DrawerOverlay />
-                <DrawerContent
-                    style={{
-                        backgroundColor: '#0850BC',
-                        color: '#fff',
-                    }}
-                >
+                <DrawerContent style={{ backgroundColor: '#00151F', color: '#fff' }}>
                     <DrawerCloseButton />
                     <DrawerBody>
                         {children}

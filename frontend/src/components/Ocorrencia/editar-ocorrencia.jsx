@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { motion, transform } from 'framer-motion'
 import axios from 'axios'
 import { useToast, Select, Input, Button } from '@chakra-ui/react'
-import { categorias } from './categorias'
+import { categorias } from '../Utils/categorias'
 import { AiOutlineEdit } from 'react-icons/ai'
 import { TbSelect } from "react-icons/tb";
-import { locais } from './locais'
+import { locais } from '../Utils/locais'
 import useWindowDimensions from '../Utils/getWindowDimensions'
 import { Box, Stack, Textarea, FormControl, FormLabel, Text } from '@chakra-ui/react';
 
@@ -30,16 +30,6 @@ function EditarOcorrencia({ id, handleClose, ocorrenciaDetails }) {
 
     const acceptedFileTypes = 'image/x-png, image/png, image/jpg, image/jpeg, image/gif';
     const acceptedFileTypesArray = acceptedFileTypes.split(",").map((item) => { return item.trim() });
-
-    const changeCategoria = () => {
-        setOutraCategoria(!outraCategoria)
-        setCategoria('')
-    }
-
-    const changeLocalizacao = () => {
-        setOutraLocalizacao(!outraLocalizacao)
-        setLocalizacao('')
-    }
 
     useEffect(() => {
         setNome(ocorrenciaDetails.nome)

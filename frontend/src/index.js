@@ -8,23 +8,26 @@ import { AuthProvider } from 'react-auth-kit'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { ChakraProvider } from "@chakra-ui/react"
 
+
+
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
-  <ChakraProvider>
-    <React.StrictMode>
-      <AuthProvider
-        authType={'cookie'}
-        authName={'_auth'}
-        sameSite={'none'}
-        cookieDomain={window.location.hostname} // setar o dominio do cookie
-        cookieSecure={false} // settar true para https
-      >
-        <BrowserRouter>
+
+    <ChakraProvider>
+      <React.StrictMode>
+        <AuthProvider
+          authType={'cookie'}
+          authName={'_auth'}
+          sameSite={'none'}
+          cookieDomain={window.location.hostname} // setar o dominio do cookie
+          cookieSecure={false} // settar true para https
+        >
+          <BrowserRouter>
             <App />
-        </BrowserRouter>
-      </AuthProvider>
-    </React.StrictMode>
-  </ChakraProvider >
+          </BrowserRouter>
+        </AuthProvider>
+      </React.StrictMode>
+    </ChakraProvider >
 )
 
 // If you want to start measuring performance in your app, pass a function

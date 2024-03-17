@@ -54,60 +54,82 @@ export default function GuardaTable({ guardas }) {
     return (
         <>
             <TableContainer>
-                <Table size={mobile ? "sm" : "md"} >
-                    <Thead>
-                        <Tr>
-                            <Th>Nome</Th>
-                            <Th>Email</Th>
-                            <Th >Status</Th>
-                        </Tr>
-                    </Thead>
-                    <Tbody>
-                        {guardas.map((guarda, index) => {
-                            return (
-                                <>
-                                    <Tr key={guarda._id}>
-                                        <Td id={index}>{guarda.name}</Td>
-                                        <Td id={index}>{guarda.email}</Td>
-                                        <Td id={index}>
-                                            {guarda.status ? `Ativo` : `Inativo`}
-                                        </Td>
-                                        <Td id={index}>
-                                            <motion.button
-                                                whileHover={{
-                                                    scale: 1.1,
-                                                    backgroundColor: "#E8E8E8",
-                                                    borderRadius: "50%",
-                                                    width: "24px",
-                                                    height: "24px",
-                                                }}
-                                                whileTap={{ scale: 0.9 }}
-                                                onClick={handleShow}
-                                            >
-                                                <FaRegEdit style={{ width: "24px", height: "24px" }} />
-                                            </motion.button>
-                                        </Td>
-                                    </Tr>
-                                    <Modal key={guarda._id} show={show} onHide={handleClose}>
+                <table className='w-full bg-white rounded-md rounded-tl-md rounded-tr-md overflow-hidden'>
+                    <thead className='text-white bg-[#00151F] opacity-90 text-md '>
+                        <tr>
+                            <th className='text-center'>id</th>
+                            <th className='text-center'>Nome</th>
+                            <th className='text-center'>Turno</th>
+                            <th className='text-center'>Data da efetivação</th>
+                            <th className='text-center'>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody className='ml-20' >
+                        {guardas.map((guarda) => (
+                            <tr key={guarda._id} className='text-center border-b-2 border-gray-200'>
+                                <td className='py-2'>{guarda?._id}</td>
+                                <td className='py-2'>{guarda?.name}</td>
+                                <td className='py-2'>{guarda?.turno}</td>
+                                <td className='py-2'>{guarda?.dataEfetivacao}</td>
+                                <td className='py-2'>{guarda?.status ? 'Ativo' : 'Inativo'}</td>
+                                <td>
+                                    <Button
+                                        onClick={handleShow}
+                                        variant="outline-primary"
+                                        className='text-[#00151F] border-[#00151F] border-2 rounded-md'
+                                    >
+                                        <FaRegEdit />
+                                    </Button>
+                                    <Modal show={show} onHide={handleClose}>
                                         <Modal.Header closeButton>
-                                            <Modal.Title>Deseja {guarda.status ? "Inativar" : "Ativar"} o guarda {guarda.name}?</Modal.Title>
+                                            <Modal.Title>Editar Guarda</Modal.Title>
                                         </Modal.Header>
-                                        <Modal.Body>Ao confirmar, a página será recarregada.</Modal.Body>
-                                        <Modal.Footer>
-                                            <Button variant="secondary" onClick={handleClose}>
-                                                cancelar
-                                            </Button>
-                                            <Button variant="primary" onClick={() => handleChangeStatus(guarda._id)}>
-                                                {guarda.status ? "Inativar" : "Ativar"} guarda
-                                            </Button>
-                                        </Modal.Footer>
+                                        <Modal.Body>
+                                            <div className='flex flex-col items-center'>
+                                                <motion.div
+                                                    initial={{ scale: 0 }}
+                                                    animate={{ scale: 1 }}
+                                                    transition={{
+                                                        type: "spring",
+                                                        stiffness: 260,
+                                                        damping: 20
+                                                    }}
+                                                >
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Nome"
+                                                        className='border-2 border-[#00151F] rounded-md p-2 my-2'
+                                                        value={guarda.nome}
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Turno"
+                                                        className='border-2 border-[#00151F] rounded-md p-2 my-2'
+                                                        value={guarda.turno}
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Data da efetivação"
+                                                        className='border-2 border-[#00151F] rounded-md p-2 my-2'
+                                                        value={guarda.dataEfetivacao}
+                                                    />
+                                                    <Button
+                                                        onClick={() => handleChangeStatus(guarda._id)}
+                                                        variant="outline-primary"
+                                                        className='text-[#00151F] border-[#00151F] border-2 rounded-md'
+                                                    >
+                                                        Atualizar
+                                                    </Button>
+                                                </motion.div>
+                                            </div>
+                                        </Modal.Body>
                                     </Modal>
-                                </>
-                            )
-                        }
-                        )}
-                    </Tbody>
-                </Table>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table >
             </TableContainer >
 
 

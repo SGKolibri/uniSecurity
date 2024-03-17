@@ -7,7 +7,7 @@ export const categorias = [
     "Dano",
     "Difamação",
     "Furto",
-    "Homicídio",
+    "Homofobia",
     "Injúria",
     "Lesão Corporal",
     "Racismo",

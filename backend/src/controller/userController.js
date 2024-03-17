@@ -11,30 +11,32 @@ const JWT_KEY = process.env.JWT_KEY;
 
 module.exports = {
     async registerUser(req, res) {
-        const { name, surname, email, password, image } = req.body;
+        const { nome, sobrenome, email, password, image, efetivacao, turno, cpf } = req.body;
 
-        console.log(name, surname, email, password, image);
+        console.log(nome, sobrenome, email, password, image, efetivacao, turno, cpf);
 
         const encryptedPassword = await bcrypt.hash(password, 10);
         try {
 
             const oldUser = await User.findOne({ email: email });
             if (oldUser) {
-                return res.json({ status: "error aqui", error: "Email já cadastrado!" });
+                return res.json({ status: "Esrror", error: "Email já cadastrado!" });
             }
             const response = await User.create({
-                name,
-                surname,
+                nome,
+                sobrenome,
                 email,
                 password: encryptedPassword,
                 image,
+                efetivacao,
+                turno,
+                cpf,
                 role: "user"
             });
             res.send({ status: "ok", user: response });
         } catch (error) {
             res.send({ status: "error", error: "Houve um problema ao registrar usuário." });
         }
-
     },
     async loginUser(req, res) {
         const { email, password } = req.body;
@@ -58,23 +60,11 @@ module.exports = {
             return res.json({ status: "error", error: "Senha incorreta." });
         }
     },
-    async getUserByEmail(req, res) {
-        const email = req.params.email;
-
-        try {
-            const user = await User.findOne({ email: email });
-            if (user) {
-                res.send({ status: "ok", name: user.name, surname: user.surname, email: user.email, password: user.password, role: user.role, image: user.image });
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    },
     async getUsers(req, res) {
         const page = Number(req.query.page) || 0;
         const limit = Number(req.query.limit) || 7;
-        const search = req.query.search || undefined; // Filtro por nome
-        const role = "user"; // Buscar apenas usuários (guardas)
+        const search = req.query.search || undefined;
+        const role = "user";
 
         if (page < 0) page = 0;
 
@@ -86,7 +76,7 @@ module.exports = {
         try {
             const users = await User.find(query).limit(limit).skip(limit * page);
             const allUsers = await User.find();
-            res.send({ status: "ok", users: users, usersLength: allUsers.length });
+            res.send({ status: "get-users", users: users, usersLength: allUsers.length });
         } catch (error) {
             console.error(error);
         }
@@ -107,7 +97,7 @@ module.exports = {
     async getAllUsers(req, res) {
         try {
             const users = await User.find();
-            res.send({ status: "ok", users: users });
+            res.send({ status: "get-all-users", users: users });
         } catch (error) {
             console.error(error);
         }
@@ -119,9 +109,9 @@ module.exports = {
             const user = await User.find({ name })
             user.map((u) => {
                 if (u.role === "root") {
-                    res.send({ status: "ok", isRoot: true });
+                    res.send({ status: "is-root", isRoot: true });
                 } else {
-                    res.send({ status: "ok", isRoot: false });
+                    res.send({ status: "is-not-root", isRoot: false });
                 }
             })
         } catch (error) {
@@ -135,7 +125,7 @@ module.exports = {
         try {
             const userImage = await User.find({ email });
             res.send({
-                status: "ok", userImage: userImage[0].image
+                status: "user-image", userImage: userImage[0].image
 
             });
         } catch (error) {

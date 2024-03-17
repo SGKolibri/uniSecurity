@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import Navbar from '../Navbar/navbar';
 import axios from 'axios';
 import { useSignIn } from 'react-auth-kit';
-import { useToast } from '@chakra-ui/react'
+import { Button, useToast } from '@chakra-ui/react'
 import { MdOutlineEmail } from "react-icons/md";
 import { IoKeyOutline } from "react-icons/io5";
+import { motion } from 'framer-motion';
 // import UserContext from '../Context/user-context'
 
 export default function Login() {
@@ -85,7 +86,7 @@ export default function Login() {
 
   return (
     <>
-      <Navbar opacity1={1} opacity2={0.75} />
+      {/* <Navbar opacity1={1} opacity2={0.75} /> */}
 
       <div className="flex flex-col items-center justify-center h-screen bg-gray-100 ">
         <div className="flex flex-col items-center justify-center w-11/12  max-w-md px-4 py-8 bg-white shadow-lg rounded-2xl">
@@ -94,7 +95,7 @@ export default function Login() {
 
               {/* Title */}
               <div className="flex items-center justify-center w-full">
-                <h1 className="text-3xl font-medium text-gray-900">
+                <h1 className="text-3xl font-semibold text-gray-900">
                   Login
                 </h1>
               </div>
@@ -149,14 +150,10 @@ export default function Login() {
                 </div>
               </div>
 
-              {/* Login Button */}
               <div className="flex w-full">
-                <button
-                  type="submit"
-                  className="py-2 px-4 bg-blue-600 hover:bg-blue-800 focus:ring-blue-600 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg"
-                >
+                <Button type="submit" className="py-2 px-4 w-full shadow-md rounded-lg" colorScheme='blue'>
                   Login
-                </button>
+                </Button>
               </div>
             </form>
           </div>
@@ -168,8 +165,8 @@ export default function Login() {
             </span>
           </div>
 
-        </div>
-      </div>
+        </div >
+      </div >
 
     </>
   )

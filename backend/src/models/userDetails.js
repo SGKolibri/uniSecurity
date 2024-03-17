@@ -6,6 +6,8 @@ const userDetailsSchema = new mongoose.Schema({
     email: { type: String, unique: true },
     password: String,
     image: String,
+    turno: String,
+    efetivacao: String,
     role: {
         type: String,
         default: 'user'

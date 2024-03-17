@@ -46,7 +46,6 @@ module.exports = {
         }
     },
     async getOcorrencia(req, res) {
-
         let search = req.query.search || undefined; // Filtro por nome
         let categoria = req.query.categoria || undefined; // Filtro por categoria
         let localizacao = req.query.localizacao || undefined; // Filtro por localizacao
@@ -68,8 +67,8 @@ module.exports = {
         }
         try {
             const ocorrencia = await Ocorrencia.find(query).limit(limit).skip(limit * page).sort({ data: sortOrder });
-            const allOcorrencia = await Ocorrencia.find({});
-            res.send({ status: "ok", ocorrencia: ocorrencia, numberOfOcorrencias: allOcorrencia.length });
+            const numberOfOcorrencias = await Ocorrencia.countDocuments(query);
+            res.send({ status: "ok", ocorrencia: ocorrencia, numberOfOcorrencias: numberOfOcorrencias });
         } catch (error) {
             console.error(error);
         }
