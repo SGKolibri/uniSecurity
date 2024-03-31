@@ -1,13 +1,11 @@
 import React from 'react'
-import Login from '../../components/Login/login-component'
-import NewLogin from '../../components/Login/new-login-component'
+import LoginComponent from '../../components/Login/login-component'
 
 export default function LoginPage() {
 
     return (
         <>
-            {/* <Login /> */}
-            <NewLogin />
+            <LoginComponent />
         </>
     )
 }

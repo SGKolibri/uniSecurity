@@ -11,27 +11,20 @@ const JWT_KEY = process.env.JWT_KEY;
 
 module.exports = {
     async registerUser(req, res) {
-        const { nome, sobrenome, email, password, image, efetivacao, turno, cpf } = req.body;
-
-        console.log(nome, sobrenome, email, password, image, efetivacao, turno, cpf);
+        const { name, surname, email, password, image, efetivacao, turno, cpf } = req.body;
 
         const encryptedPassword = await bcrypt.hash(password, 10);
         try {
-
-            const oldUser = await User.findOne({ email: email });
-            if (oldUser) {
-                return res.json({ status: "Esrror", error: "Email já cadastrado!" });
-            }
             const response = await User.create({
-                nome,
-                sobrenome,
+                name,
+                surname,
                 email,
                 password: encryptedPassword,
                 image,
-                efetivacao,
                 turno,
-                cpf,
-                role: "user"
+                efetivacao,
+                role: "user",
+                cpf
             });
             res.send({ status: "ok", user: response });
         } catch (error) {
@@ -68,25 +61,45 @@ module.exports = {
 
         if (page < 0) page = 0;
 
-        let query = {};
+        let query = { role };
         if (search !== undefined) {
             query.search = { $regex: new RegExp(search, 'i') };
         }
-        query.role = role;
+
         try {
             const users = await User.find(query).limit(limit).skip(limit * page);
-            const allUsers = await User.find();
-            res.send({ status: "get-users", users: users, usersLength: allUsers.length });
+            const usersCount = await User.countDocuments(query);
+            res.send({ status: "get-users", users: users, usersLength: usersCount });
         } catch (error) {
             console.error(error);
+        }
+    },
+
+    async updateUser(req, res) {
+        const id = req.params.id;
+        const { name, surname, email, password, image, efetivacao, turno, cpf } = req.body;
+
+        const encryptedPassword = await bcrypt.hash(password, 10);
+        try {
+            const response = await User.findByIdAndUpdate(id, {
+                name,
+                surname,
+                email,
+                password: encryptedPassword,
+                image,
+                efetivacao,
+                turno,
+                cpf
+            });
+            res.send({ status: "ok", user: response });
+        } catch (error) {
+            res.send({ status: "error", error: "Houve um problema ao atualizar usuário." });
         }
     },
     async updateUserStatus(req, res) {
         try {
             const id = req.params.id;
             const { status } = req.body
-
-            console.log(status);
 
             const response = await User.findByIdAndUpdate(id, { status: status });
             res.send({ status: "suave", user: response });
@@ -101,23 +114,6 @@ module.exports = {
         } catch (error) {
             console.error(error);
         }
-    },
-    async isRoot(req, res) {
-        const name = req.params.name;
-
-        try {
-            const user = await User.find({ name })
-            user.map((u) => {
-                if (u.role === "root") {
-                    res.send({ status: "is-root", isRoot: true });
-                } else {
-                    res.send({ status: "is-not-root", isRoot: false });
-                }
-            })
-        } catch (error) {
-            console.log(error)
-        }
-
     },
     async getUserImage(req, res) {
         const email = req.params.email;

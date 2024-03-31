@@ -9,7 +9,10 @@ const OcorrenciaInfoSchema = new mongoose.Schema({
     descricao: String,
     image: String,
     registeredBy: String,
-    
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
 }, {
     collection: 'OcorrenciaInfo'
 });

@@ -4,24 +4,32 @@ import { useSignOut } from "react-auth-kit";
 import { BiShieldQuarter } from '@react-icons/all-files/bi/BiShieldQuarter';
 import base64 from "react-native-base64";
 import Image from 'react-bootstrap/Image';
-import useWindowDimensions from '../Utils/getWindowDimensions'
-import { ImExit } from "react-icons/im";
 import { FaBars } from '@react-icons/all-files/fa/FaBars'
-import { AiTwotoneEdit } from '@react-icons/all-files/ai/AiTwotoneEdit'
-import { AiOutlineEye } from '@react-icons/all-files/ai/AiOutlineEye'
-import { useDisclosure } from "@chakra-ui/react";
 import { AiOutlineUser } from '@react-icons/all-files/ai/AiOutlineUser'
 import { useLocation } from "react-router-dom";
 import DrawerSidebar from "./drawer-sidebar";
 import axios from "axios";
 import { useAuthUser } from 'react-auth-kit';
-import { user } from "@nextui-org/react";
+import SairIcon from '../../images/sair.png';
+import GuardIcon from '../../images/chapeu-policial.png';
+import OcorrenciasIcon from '../../images/ocorrencias.png';
+import LapisIcon from '../../images/ferramenta-lapis.png';
+import { motion } from 'framer-motion';
+import {
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+    useDisclosure
+} from '@chakra-ui/react';
 
 function NavbarHome() {
 
     const authUser = useAuthUser();
 
-    const { width } = useWindowDimensions();
     const location = useLocation();
     const signOut = useSignOut();
     const navigate = useNavigate();
@@ -47,7 +55,10 @@ function NavbarHome() {
     };
 
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen: isOpenLogOut, onOpen: onOpenLogOut, onClose: onCloseLogOut } = useDisclosure();
     const btnRef = React.useRef();
+
+    const btnLogOutRef = React.useRef()
 
     function ConvertToImageFormat(base64ImageFormat, appTitle) {
         let url = base64ImageFormat;
@@ -58,19 +69,26 @@ function NavbarHome() {
             let blob = new Blob([decodedSvg], { type: "image/svg+xml" });
             url = URL.createObjectURL(blob);
         }
-        return <Image src={url} alt={`${appTitle}`} className="w-14 h-14 md:w-10 md:h-10 rounded-full" />;
+        return <Image src={url} alt={`${appTitle}`} className="w-10 h-10 rounded-full" />;
     };
 
     return (
         <>
-            <nav className="flex w-full py-2.5 justify-between items-center bg-[#00151F]" >
-                <div className="flex">
-                    <div className="flex md:hidden pl-6 md:pl-0 items-center gap-1 text-lg">
-                        <FaBars className="mr-4 cursor-pointer text-white w-7 h-7 lg:w-12 lg:h-12" onClick={onOpen} />
+            <nav className="flex w-full py-2.5 items-center bg-[#00252f] md:bg-[#00151F]" >
+                <div className="flex md:hidden w-full items-center px-6 justify-between">
+                    <FaBars className="mr-4 cursor-pointer text-white w-7 h-7 lg:w-12 lg:h-12" onClick={onOpen} />
+                    <div className="text-white text-2xl">
+                        Uni
+                        <b>Security</b>
                     </div>
+                    {userImage && userImage === "" ?
+                        <AiOutlineUser className="w-8 h-8" /> : userImage
+                    }
+                </div>
+                <div className="flex">
                     <div className="flex items-center gap-1 text-lg justify-end md:justify-start pl-0 md:pl-24 w-full">
-                        <Link className="text-white block" to={'/home/ver-ocorrencia'}>
-                            <BiShieldQuarter className="w-12 h-12 sm:w-10 sm:h-10" />
+                        <Link className="text-white hidden md:block" to={'/home/ver-ocorrencia'}>
+                            <BiShieldQuarter className="w-10 h-10" />
                         </Link>
                         <Link className="navbar-brand text-white hidden md:block" to={'/home/ver-ocorrencia'}>
                             Uni
@@ -78,7 +96,8 @@ function NavbarHome() {
                         </Link>
                     </div>
                 </div>
-                <div className="w-full pl-20 items-center text-white hidden md:flex">
+
+                <div className="w-full pl-6 lg:pl-20 items-center text-white hidden md:flex text-md md:text-md">
                     <ul className="navbar-nav flex flex-row gap-5">
                         <li className={`${location.pathname === '/home/reg-ocorrencia' ? 'opacity-100' : 'opacity-50'}`}>
                             <Link to='/home/reg-ocorrencia'> Registrar Ocorrência </Link>
@@ -94,60 +113,85 @@ function NavbarHome() {
                     </ul>
                 </div>
 
-                <div className="md:flex pr-36 hidden text-white items-center text-lg gap-2">
-                    {userImage && userImage === "" ?
-                        <AiOutlineUser className="w-10 h-10" /> : userImage
-                    }
-                    <div className="flex flex-col px-5">
-                        <label className="text-lg">
-                            {userName}
-                        </label>
-                        <label className="text-xs pl-1">
-                            {userRole === "root" ? "Guarda Chefe" : "Guarda"}
-                        </label>
+                <div className="w-full pr-10 lg:pr-20 hidden md:flex md:flex-row items-center justify-end text-white ">
+                    <div className="flex gap-2">
+                        {userImage && userImage === "" ?
+                            <AiOutlineUser className="w-8 h-8" /> : userImage
+                        }
+                        <div className="flex flex-col pr-5">
+                            <label className="text-lg">
+                                {userName}
+                            </label>
+                            <label className="text-xs pl-1">
+                                {userRole === "root" ? "Guarda Chefe" : "Guarda"}
+                            </label>
+                        </div>
                     </div>
                     <div className="px-4">
-                        <ImExit className="w-7 h-7" onClick={logOut} />
+                        <img src={SairIcon} alt="Sair Icon" className="w-6 h-6 cursor-pointer" onClick={onOpenLogOut} />
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between lg:hidden">
+                <div className="flex items-center justify-between sm:hidden">
                     <DrawerSidebar isOpen={isOpen} onClose={onClose} btnRef={btnRef}>
-                        <ul className="navbar-nav ml-auto">
-                            <div className="flex items-center justify-start pr-6">
-                                <div className="pt-3 mr-[5%] flex items-center gap-3">
-                                    {userImage && userImage === "" ?
-                                        <AiOutlineUser className="w-10 h-10" /> : userImage
-                                    }
-                                    <label className="text-[#ddd]">
-                                        Luana Cano Morais
-                                    </label>
-                                </div>
-                                <div className="text-white ml-1 mt-3 text-3xl">
-                                    {userName}
-                                </div>
-                            </div>
-                        </ul>
-                        <hr className=" border-1" />
-                        <ul className="h-[88%] navbar-nav mt-10 text-2xl gap-6">
+                        <div className="flex items-center pr-6 text-3xl mt-2 justify-center">
+                            Uni<b>Security</b>
+                        </div>
+                        <hr className="border-1" />
+                        <ul className="h-[88%] navbar-nav mt-10 text-lg gap-8">
                             <a href='/home/reg-ocorrencia' className="flex" onClick={onClose} style={{ opacity: location.pathname === '/home/reg-ocorrencia' ? 1 : 0.5 }}>
-                                <AiTwotoneEdit className="mr-3 w-8 h-8" />
-                                Registrar Ocorrência
+                                <img src={LapisIcon} alt="Lapis Icon" className="ml-1 mr-3 w-6 h-6" />
+                                Registrar ocorrência
                             </a>
                             <a href='/home/ver-ocorrencia' className="flex" onClick={onClose} style={{ opacity: location.pathname === '/home/ver-ocorrencia' ? 1 : 0.5 }}>
-                                <AiOutlineEye className="mr-3 w-8 h-8" />
-                                Ver Ocorrência
+                                <img src={OcorrenciasIcon} alt="Ocorrências Icon" className="mr-3 w-7 h-7" />
+                                Todas as ocorrências
                             </a>
-                            <li className="flex mt-auto nav-item">
-                                <div className="text-white flex" onClick={logOut} >
-                                    <ImExit className="mr-3 w-8 h-8 mb-10" onClick={logOut} />
-                                    Sair
+                            <a href='/home/guarda' className="flex" onClick={onClose} style={{ opacity: location.pathname === '/home/guarda' ? 1 : 0.5 }}>
+                                <img src={GuardIcon} alt="Guard Icon" className="mr-3 w-7 h-7" />
+                                Tabela de guardas
+                            </a>
+                            <li className="flex mt-auto nav-item w-full justify-end">
+                                <div className="text-white flex" >
+                                    <img src={SairIcon} alt="Sair Icon" className="w-7 h-7 mb-2 cursor-pointer" onClick={
+                                        onOpenLogOut
+                                    } />
                                 </div>
                             </li>
                         </ul>
                     </DrawerSidebar>
                 </div>
+                <Modal isCentered={true} isOpen={isOpenLogOut} onClose={onCloseLogOut} >
+                    <ModalOverlay />
+                    <ModalContent style={{
+                        backgroundColor: '#00252f',
+                        color: '#fff'
+                    }}>
+                        <ModalCloseButton />
+                        <ModalHeader>
+                            <label className="text-[#D8D8D8] font-normal">
+                                Tem certeza que deseja sair?
+                            </label>
+                        </ModalHeader>
+
+                        <ModalFooter>
+                            <div className="w-full flex justify-around font-light">
+                                <motion.button ref={btnLogOutRef} onClick={onCloseLogOut}>
+                                    <label className="no-underline hover:underline cursor-pointer">
+                                        Não
+                                    </label>
+                                </motion.button>
+                                <motion.button colorScheme="blue" mr={3} onClick={logOut}>
+                                    <label className="no-underline hover:underline cursor-pointer">
+                                        Sair
+                                    </label>
+                                </motion.button>
+                            </div>
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
             </nav >
+
         </>
     )
 }

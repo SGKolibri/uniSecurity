@@ -11,10 +11,10 @@ router.get("/get-users", userController.getUsers);
 
 router.get("/get-all-users", userController.getAllUsers);
 
-router.get("/is-root/:name", userController.isRoot)
-
 router.get("/get-user-image/:email", userController.getUserImage);
 
 router.patch("/update-user-status/:id", userController.updateUserStatus);
+
+router.put("/update-user/:id", userController.updateUser);
 
 module.exports = router;

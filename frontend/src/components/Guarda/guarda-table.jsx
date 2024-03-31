@@ -1,64 +1,39 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Table, Thead, Tbody, Tr, Th, Td, TableContainer } from "@chakra-ui/react"
-import useWindowDimensions from '../Utils/getWindowDimensions'
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import { FaRegEdit } from "react-icons/fa";
+import { TableContainer, Switch, Spinner, Input, InputGroup, InputLeftElement, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, useDisclosure, Select } from '@chakra-ui/react'
 import { motion } from 'framer-motion';
 import { useToast } from '@chakra-ui/react'
+import { BsPencilSquare } from '@react-icons/all-files/bs/BsPencilSquare';
+import ModalGuarda from './modal-guarda';
 
-export default function GuardaTable({ guardas }) {
-    const { width } = useWindowDimensions();
-    const mobile = width < 992;
-    let backendURL = process.env.REACT_APP_BACKEND_URL;
+export default function GuardaTable({ guardas, statusChange, getGuardas }) {
 
-    const toast = useToast()
+
+    const { isOpen, onOpen, onClose } = useDisclosure()
+
     const [guardasState, setGuardasState] = useState(guardas);
-
-    const [show, setShow] = useState(false);
-
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
+    const [selectedGuarda, setSelectedGuarda] = useState(null);
 
     useEffect(() => {
         setGuardasState(guardas);
     }, [guardas, guardasState]);
 
-    const handleChangeStatus = (id) => {
-        let guarda = guardasState.find(guarda => guarda._id === id);
+    const formatDate = (date) => {
+        if (!date) return;
 
-        axios.patch(`${backendURL}/update-user-status/${id}`, {
-            status: guarda.status === true ? false : true
-        }).then((response) => {
-            toast({
-                title: "Status atualizado com sucesso!",
-                description: "A página será recarregada.",
-                position: "center",
-                status: "success",
-                duration: 2000,
-                isClosable: true,
-            })
-            setGuardasState(guardasState.map(guarda =>
-                guarda._id === id ? { ...guarda, status: response.data.user.status } : guarda
-            ))
-            handleClose();
-            setTimeout(() => {
-                window.location.reload();
-            }, 2000);
-        })
-    };
+        let dateArray = date.split("T");
+        let dateFormatted = dateArray[0].split("-").reverse().join("/");
+        return dateFormatted;
+    }
 
     return (
         <>
             <TableContainer>
-                <table className='w-full bg-white rounded-md rounded-tl-md rounded-tr-md overflow-hidden'>
+                <table className='w-full bg-white rounded-tl-none md:rounded-tl-sm rounded-tr-none md:rounded-tr-sm overflow-hidden'>
                     <thead className='text-white bg-[#00151F] opacity-90 text-md '>
                         <tr>
-                            <th className='text-center'>id</th>
-                            <th className='text-center'>Nome</th>
+                            <th className='text-center'>Nome Completo</th>
                             <th className='text-center'>Turno</th>
                             <th className='text-center'>Data da efetivação</th>
                             <th className='text-center'>Status</th>
@@ -68,71 +43,43 @@ export default function GuardaTable({ guardas }) {
                     <tbody className='ml-20' >
                         {guardas.map((guarda) => (
                             <tr key={guarda._id} className='text-center border-b-2 border-gray-200'>
-                                <td className='py-2'>{guarda?._id}</td>
-                                <td className='py-2'>{guarda?.name}</td>
-                                <td className='py-2'>{guarda?.turno}</td>
-                                <td className='py-2'>{guarda?.dataEfetivacao}</td>
+                                <td className='py-2'>{guarda?.name} {guarda?.surname}</td>
+                                <td className='py-2'>
+                                    {guarda?.turno === 'manha' ? 'Manhã' : guarda?.turno === 'tarde' ? 'Tarde' : 'Noite'}
+                                </td>
+                                <td className='py-2'>
+                                    {formatDate(guarda?.efetivacao)}
+                                </td>
                                 <td className='py-2'>{guarda?.status ? 'Ativo' : 'Inativo'}</td>
-                                <td>
-                                    <Button
-                                        onClick={handleShow}
-                                        variant="outline-primary"
-                                        className='text-[#00151F] border-[#00151F] border-2 rounded-md'
-                                    >
-                                        <FaRegEdit />
-                                    </Button>
-                                    <Modal show={show} onHide={handleClose}>
-                                        <Modal.Header closeButton>
-                                            <Modal.Title>Editar Guarda</Modal.Title>
-                                        </Modal.Header>
-                                        <Modal.Body>
-                                            <div className='flex flex-col items-center'>
-                                                <motion.div
-                                                    initial={{ scale: 0 }}
-                                                    animate={{ scale: 1 }}
-                                                    transition={{
-                                                        type: "spring",
-                                                        stiffness: 260,
-                                                        damping: 20
-                                                    }}
-                                                >
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Nome"
-                                                        className='border-2 border-[#00151F] rounded-md p-2 my-2'
-                                                        value={guarda.nome}
-                                                    />
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Turno"
-                                                        className='border-2 border-[#00151F] rounded-md p-2 my-2'
-                                                        value={guarda.turno}
-                                                    />
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Data da efetivação"
-                                                        className='border-2 border-[#00151F] rounded-md p-2 my-2'
-                                                        value={guarda.dataEfetivacao}
-                                                    />
-                                                    <Button
-                                                        onClick={() => handleChangeStatus(guarda._id)}
-                                                        variant="outline-primary"
-                                                        className='text-[#00151F] border-[#00151F] border-2 rounded-md'
-                                                    >
-                                                        Atualizar
-                                                    </Button>
-                                                </motion.div>
-                                            </div>
-                                        </Modal.Body>
-                                    </Modal>
+                                <td className='text-center'>
+                                    <td className='flex justify-center items-center gap-2.5 py-[12px]'>
+                                        <Switch
+                                            colorScheme='green'
+                                            size='sm'
+                                            isChecked={guarda?.status}
+                                            onChange={() => {
+                                                statusChange(guarda._id);
+                                            }}
+                                        />
+                                        <motion.button onClick={(event) => {
+                                            event.stopPropagation();
+                                            setSelectedGuarda(guarda);
+                                            onOpen();
+                                        }} >
+                                            <BsPencilSquare />
+                                        </motion.button>
+                                    </td>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table >
+                {
+                    selectedGuarda && (
+                        <ModalGuarda isOpen={isOpen} onClose={onClose} selectedGuarda={selectedGuarda} getGuardas={getGuardas} />
+                    )
+                }
             </TableContainer >
-
-
         </>
     )
 }

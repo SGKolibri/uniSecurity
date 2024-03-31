@@ -24,6 +24,7 @@ module.exports = {
       },
       backgroundImage: {
         'gradient-bg': 'linear-gradient(90deg, #0A5364 0%, #094756 17.01%, #0B1B1A 67.51%, #0E110A 90.06%)',
+        'gradient-md': 'linear-gradient(180deg, #002B35, #007E9B)'
       }
     }
   },

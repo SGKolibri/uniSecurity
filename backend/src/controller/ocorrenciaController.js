@@ -49,6 +49,7 @@ module.exports = {
         let search = req.query.search || undefined; // Filtro por nome
         let categoria = req.query.categoria || undefined; // Filtro por categoria
         let localizacao = req.query.localizacao || undefined; // Filtro por localizacao
+        let registeredBy = req.query.registeredBy || undefined; // Filtro por quem registrou
         let sortOrder = req.query.sortOrder || 1; // 1 most recent, -1 oldest
         let page = Number(req.query.page) || 0; // Paginação
         let limit = Number(req.query.limit) || 8;
@@ -64,6 +65,9 @@ module.exports = {
         }
         if (localizacao !== undefined) {
             query.localizacao = { $regex: new RegExp(localizacao, 'i') };
+        }
+        if (registeredBy !== undefined) {
+            query.registeredBy = { $regex: new RegExp(registeredBy, 'i') };
         }
         try {
             const ocorrencia = await Ocorrencia.find(query).limit(limit).skip(limit * page).sort({ data: sortOrder });

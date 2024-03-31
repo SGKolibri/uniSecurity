@@ -7,12 +7,43 @@ import { BsPencilSquare } from '@react-icons/all-files/bs/BsPencilSquare';
 import { BsTrash } from '@react-icons/all-files/bs/BsTrash';
 import { FaEye } from "react-icons/fa";
 import { useDisclosure } from '@chakra-ui/react'
+import ModalOcorrenciaEdit from './modal-ocorrencia-edit';
+import Swal from 'sweetalert2'
+import axios from 'axios';
 
-function Cards({ ocorrencias, gridView }) {
+const DeleteOcorrencia = (id, getOcorrencias) => {
+    Swal.fire({
+        title: 'Você tem certeza?',
+        text: "Essa ação não pode ser revertida!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: 'green',
+        cancelButtonColor: 'black',
+        confirmButtonText: 'Deletar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Deletado!',
+                text: 'Ocorrência deletada com sucesso.',
+                icon: 'success',
+                confirmButtonColor: 'green'
+            }
+            )
+            axios.delete(`${process.env.REACT_APP_BACKEND_URL}/delete-ocorrencia/${id}`)
+                .then(res => {
+                    getOcorrencias()
+                })
+        }
+    })
+}
+
+function Cards({ ocorrencias, gridView, getOcorrencias }) {
 
     const [selectedOcorrencia, setSelectedOcorrencia] = useState(null);
 
     const { isOpen, onOpen, onClose } = useDisclosure()
+    const { isOpen: isOpenEdit, onOpen: onOpenEdit, onClose: onCloseEdit } = useDisclosure();
 
     const sliceNameAtBlankSpace = (name) => {
         let nameArr = name.split(" ");
@@ -82,7 +113,6 @@ function Cards({ ocorrencias, gridView }) {
     }
 
     const displayTable = () => {
-
         if (!ocorrencias || ocorrencias.length === 0) {
             return (
                 <div style={{ textAlign: "center", margin: "5%" }}>
@@ -93,7 +123,7 @@ function Cards({ ocorrencias, gridView }) {
 
         const createTable = () => (
             <TableContainer>
-                <table className='w-full bg-white rounded-md rounded-tl-md rounded-tr-md overflow-hidden'>
+                <table className='w-full bg-white rounded-tl-none rounded-tr-none md:rounded-tl-sm md:rounded-tr-sm overflow-hidden'>
                     <thead className='text-white bg-[#00151F] opacity-90 text-md '>
                         <tr>
                             <th className='text-center'>Registrado por</th>
@@ -104,30 +134,29 @@ function Cards({ ocorrencias, gridView }) {
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody className='ml-20' >
+                    <tbody  >
                         {ocorrencias.map((ocorrencia) => (
                             <tr key={ocorrencia._id} className='border-b border-gray-300' >
                                 <td className='text-center'>
                                     {ocorrencia.registeredBy}
                                 </td>
+                                <td className='text-center'> {ocorrencia.categoria} </td>
+                                <td className='text-center'> {ocorrencia.localizacao} </td>
+                                <td className='text-center'> {ocorrencia.data} </td>
+                                <td className='text-center'> {ocorrencia.hora} </td>
                                 <td className='text-center'>
-                                    {ocorrencia.categoria}
-                                </td>
-                                <td className='text-center'>
-                                    {ocorrencia.localizacao}
-                                </td>
-                                <td className='text-center'>
-                                    {ocorrencia.data}
-                                </td>
-                                <td className='text-center'>
-                                    {ocorrencia.hora}
-                                </td>
-                                <td className='text-center'>
-                                    <td className='flex justify-center items-center gap-2.5 py-2.5'>
-                                        <motion.button>
+                                    <td className='flex justify-center items-center gap-2.5 py-[12px]'>
+                                        <motion.button
+                                            onClick={(event) => {
+                                                event.stopPropagation();
+                                                setSelectedOcorrencia(ocorrencia)
+                                                onOpenEdit()
+                                            }}
+                                        >
                                             <BsPencilSquare />
                                         </motion.button>
-                                        <motion.button>
+                                        <motion.button
+                                            onClick={() => DeleteOcorrencia(ocorrencia._id, getOcorrencias)} >
                                             <BsTrash />
                                         </motion.button>
                                         <motion.button onClick={(event) => {
@@ -139,7 +168,6 @@ function Cards({ ocorrencias, gridView }) {
                                         >
                                             <FaEye />
                                         </motion.button>
-
                                     </td>
                                 </td>
                             </tr>
@@ -153,7 +181,8 @@ function Cards({ ocorrencias, gridView }) {
             <div className="flex flex-col w-full">
                 {createTable()}
                 {selectedOcorrencia && (
-                    <ModalOcorrencia isOpen={isOpen} onClose={onClose} selectedOcorrencia={selectedOcorrencia} />
+                    <ModalOcorrencia isOpen={isOpen} onClose={onClose} selectedOcorrencia={selectedOcorrencia} />,
+                    <ModalOcorrenciaEdit isOpen={isOpenEdit} onClose={onCloseEdit} selectedOcorrencia={selectedOcorrencia} getOcorrencias={getOcorrencias} />
 
                 )}
             </div>

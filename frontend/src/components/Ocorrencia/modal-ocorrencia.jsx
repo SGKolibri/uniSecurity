@@ -4,108 +4,14 @@ import { BsPencilSquare } from '@react-icons/all-files/bs/BsPencilSquare';
 import { HiOutlineMail } from '@react-icons/all-files/hi/HiOutlineMail'
 import { useToast } from '@chakra-ui/react';
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, } from '@chakra-ui/react'
-import EditarOcorrencia from './editar-ocorrencia';
 import Swal from 'sweetalert2'
 import axios from 'axios';
 
 function ModalOcorrencia({ isOpen, onClose, selectedOcorrencia }) {
 
-    // const backendURL = process.env.REACT_APP_BACKEND_URL;
-    // const toast = useToast();
-
-    // /* Edit Modal */
-    // const [editModalShow, setEditModalShow] = useState(false);
-    // const handleCloseEdit = () => setEditModalShow(false);
-
-    // /* Delete modal */
-    // const [deleteModalShow, setDeleteModalShow] = useState(false);
-    // const handleCloseDelete = () => setDeleteModalShow(false);
-
-    // let nome = ocorrenciaDetails.nome;
-    // let categoria = ocorrenciaDetails.categoria;
-    // let data = ocorrenciaDetails.data;
-    // let hora = ocorrenciaDetails.hora;
-    // let localizacao = ocorrenciaDetails.localizacao;
-    // let descricao = ocorrenciaDetails.descricao;
-    // let image = ocorrenciaDetails.image;
-
-    // const handleSendEmail = async () => {
-    //     axios.post(`${backendURL}/pdf`, {
-    //         nome: ocorrenciaDetails.nome,
-    //         categoria,
-    //         data,
-    //         hora,
-    //         localizacao,
-    //         descricao,
-    //         image,
-    //     })
-    //     toast({
-    //         title: "Email enviado!",
-    //         description: "Email enviado com sucesso!",
-    //         status: "success",
-    //         duration: "3000",
-    //         isClosable: true,
-    //     })
-    //     await axios.post(`${backendURL}/send-email-by-id/${id}`, {
-    //         emailTo: process.env.EMAIL_HOST_USER,
-    //         title: ocorrenciaDetails.nome,
-    //     })
-
-    // }
-
-    // const handleDelete = async () => {
-    //     await axios.delete(`${backendURL}/delete-ocorrencia/${id}`);
-    //     Swal.fire({
-    //         title: 'Ocorrência deletada!',
-    //         icon: 'success',
-    //         confirmButtonText: 'Fechar',
-    //         confirmButtonColor: '#3085d6',
-    //     })
-    //     refreshCards()
-    // }
-
-    // function ConfirmDeleteModal() {
-    //     Swal.fire({
-    //         title: 'Tem certeza que deseja deletar?',
-    //         text: "Você não poderá reverter isso!",
-    //         icon: 'warning',
-    //         showCancelButton: true,
-    //         confirmButtonColor: '#3085d6',
-    //         cancelButtonColor: '#d33',
-    //         confirmButtonText: 'Sim, deletar!',
-    //         cancelButtonText: 'Cancelar'
-    //     }).then((result) => {
-    //         if (result.isConfirmed) {
-    //             handleDelete()
-    //         }
-    //     })
-    // }
-
-    // function ModalEdit(props) {
-    //     return (
-    //         <Modal
-    //             show={editModalShow}
-    //             onHide={() => setEditModalShow(false)}
-    //             {...props}
-    //             size="lg"
-    //             aria-labelledby="contained-modal-title-vcenter"
-    //             centered
-    //         >
-    //             <Modal.Header closeButton>
-    //                 <Modal.Title id="contained-modal-title-vcenter">
-    //                     Editar Ocorrência
-    //                 </Modal.Title>
-    //             </Modal.Header>
-    //             <Modal.Body>
-    //                 <EditarOcorrencia id={id} handleClose={handleCloseEdit} ocorrenciaDetails={ocorrenciaDetails} />
-    //             </Modal.Body>
-    //         </Modal>
-    //     );
-    // }
-
     return (
         <>
-            <Modal isOpen={isOpen} onClose={onClose} size="xl">
+            <Modal isCentered={true} isOpen={isOpen} onClose={onClose} size={'lg'} className='px-4'>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>

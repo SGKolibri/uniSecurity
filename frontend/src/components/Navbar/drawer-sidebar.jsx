@@ -18,7 +18,7 @@ export default function DrawerSidebar({ children, isOpen, onClose, btnRef }) {
                 finalFocusRef={btnRef}
             >
                 <DrawerOverlay />
-                <DrawerContent style={{ backgroundColor: '#00151F', color: '#fff' }}>
+                <DrawerContent style={{ backgroundColor: '#00252f', color: '#fff' }}>
                     <DrawerCloseButton />
                     <DrawerBody>
                         {children}

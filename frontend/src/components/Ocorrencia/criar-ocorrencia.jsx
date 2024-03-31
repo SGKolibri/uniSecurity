@@ -9,9 +9,13 @@ import Swal from 'sweetalert2'
 import NavbarHome from '../Navbar/navbar-home'
 import { FaFileUpload } from "react-icons/fa";
 import { MdOutlineHideImage } from "react-icons/md";
+import { useAuthUser } from 'react-auth-kit';
 import { motion } from 'framer-motion'
 
 function CriarOcorrencia() {
+
+    const authUser = useAuthUser();
+    const userName = authUser().userDetail.name;
 
     const backendURL = process.env.REACT_APP_BACKEND_URL;
 
@@ -24,8 +28,7 @@ function CriarOcorrencia() {
     const [localizacao, setLocalizacao] = useState('');
     const [descricao, setDescricao] = useState('');
     const [image, setImage] = useState('');
-    const [loadingImage, setLoadingImage] = useState(false);
-    const registeredBy = localStorage.getItem('userName');
+    const registeredBy = userName;
 
     const [showImg, setShowImg] = useState(false);
 
@@ -43,8 +46,6 @@ function CriarOcorrencia() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        console.log(image)
 
         if (nome === '' || data === '' || hora === '' || categoria === '' || localizacao === '' || descricao === '') {
             toast({
@@ -75,7 +76,6 @@ function CriarOcorrencia() {
         }, {
             position: "bottom-center"
         })
-
         clearAllField();
     }
 
@@ -117,18 +117,15 @@ function CriarOcorrencia() {
             confirmButtonText: 'Sim, cancelar!',
             cancelButtonText: 'Cancelar'
         }).then((result) => {
-            if (result.isConfirmed) {
-                clearAllField();
-            }
+            if (result.isConfirmed) clearAllField();
         })
     }
 
     return (
         <>
-
             <div className='w-full h-screen flex flex-col items-center bg-[#F2F2F2] relative'>
                 <NavbarHome />
-                <div className='w-[90%] h-full bg-white mt-[1rem] mb-4 rounded-sm shadow-lg px-4 md:px-24 lg:px-32'>
+                <div className='w-[90%] h-full bg-white mt-[1rem] mb-4 rounded-sm shadow-lg px-[24px] md:px-[96px] lg:px-[120px]'>
                     <div className='w-full text-center pt-[30px] pb-8'>
                         <label className=' text-3xl font-semibold'>
                             Registrar Ocorrência
@@ -217,7 +214,6 @@ function CriarOcorrencia() {
                                 {!image ?
                                     <MdOutlineHideImage className='w-80 h-80 opacity-80' />
                                     :
-                                    
                                     <img className='max-w-80 max-h-80 rounded-sm' src={image} alt="Imagem da ocorrência" />
                                 }
                             </label>
